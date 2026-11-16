@@ -1,0 +1,446 @@
+/* "Hold to drive the lap" component. All selectors namespaced under .ld */
+
+.ld {
+  --ld-ink: var(--ink, #07110d);
+  --ld-cream: var(--cream, #f3efe4);
+  --ld-yellow: var(--yellow, #ffdf00);
+  --ld-green: var(--green, #00a651);
+  --ld-blue: var(--blue, #1b4fd8);
+  --ld-navy: var(--navy, #0b1f4b);
+  --ld-accent: var(--ld-yellow);
+  --ld-mono: var(--f-mono, "JetBrains Mono", ui-monospace, Menlo, monospace);
+  --ld-display: var(--f-display, "Big Shoulders Display", "Arial Narrow", Impact, sans-serif);
+  --ld-serif: var(--f-serif, "Instrument Serif", Georgia, serif);
+  --ld-ease: var(--ease, cubic-bezier(0.2, 0.8, 0.2, 1));
+
+  /* light theme defaults */
+  --ld-bg: var(--ld-cream);
+  --ld-fg: var(--ld-ink);
+  --ld-fg-rgb: 7, 17, 13;
+  --ld-bg-rgb: 243, 239, 228;
+  --ld-rule: rgba(var(--ld-fg-rgb), 0.16);
+
+  position: relative;
+  width: 100%;
+  color: var(--ld-fg);
+  font-family: var(--ld-mono);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
+  border-radius: 6px;
+}
+.ld--dark {
+  --ld-bg: var(--ld-ink);
+  --ld-fg: var(--ld-cream);
+  --ld-fg-rgb: 243, 239, 228;
+  --ld-bg-rgb: 7, 17, 13;
+}
+.ld:focus-visible {
+  box-shadow: 0 0 0 2px var(--ld-bg), 0 0 0 4px var(--ld-accent);
+}
+.ld *,
+.ld *::before,
+.ld *::after { box-sizing: border-box; }
+
+.ld-stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 10 / 7;
+  overflow: hidden;
+  border: 1px solid var(--ld-rule);
+  border-radius: 6px;
+  background:
+    radial-gradient(120% 90% at 50% 40%, rgba(var(--ld-fg-rgb), 0.035), transparent 70%),
+    var(--ld-bg);
+  container-type: inline-size;
+  cursor: pointer;
+  isolation: isolate;
+}
+.ld--reduced .ld-stage { cursor: default; }
+
+.ld-shake {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+.ld-svg {
+  position: absolute;
+  inset: 4% 4% 13% 4%;
+  width: 92%;
+  height: 83%;
+  overflow: visible;
+}
+
+/* track layers */
+.ld-ghost {
+  stroke: rgba(var(--ld-fg-rgb), 0.14);
+  stroke-width: 14;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ld-ghost-hi {
+  stroke: rgba(var(--ld-fg-rgb), 0.22);
+  stroke-width: 22;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.ld-drive,
+.ld-drive-glow,
+.ld-drive-under {
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ld-drive { stroke: var(--ld-accent); stroke-width: 4.5; }
+.ld-drive-glow { stroke: var(--ld-accent); stroke-width: 12; opacity: 0.42; }
+.ld-drive-under { stroke: transparent; stroke-width: 8; }
+.ld--accent-pale .ld-drive-under { stroke: rgba(7, 17, 13, 0.55); }
+.ld--accent-pale .ld-drive-glow { opacity: 0.6; }
+
+.ld-trail path {
+  stroke: var(--ld-accent);
+  stroke-linecap: round;
+}
+.ld-trail-0 { stroke-width: 16; }
+.ld-trail-1 { stroke-width: 10; }
+.ld-trail-2 { stroke-width: 6; }
+
+.ld-start {
+  stroke: var(--ld-fg);
+  stroke-width: 4;
+  stroke-linecap: butt;
+  stroke-dasharray: 4 4;
+}
+.ld-sector-tick {
+  stroke: rgba(var(--ld-fg-rgb), 0.45);
+  stroke-width: 2;
+}
+
+.ld-corner {
+  font-family: var(--ld-mono);
+  font-size: 19px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: var(--ld-fg);
+  opacity: 0;
+  paint-order: stroke;
+  stroke: var(--ld-bg);
+  stroke-width: 5px;
+  stroke-linejoin: round;
+}
+.ld-corner.is-on { animation: ld-corner 1.9s var(--ld-ease) both; }
+@keyframes ld-corner {
+  0% { opacity: 0; transform: translateY(6px); }
+  14% { opacity: 1; transform: none; }
+  70% { opacity: 1; }
+  100% { opacity: 0.22; }
+}
+.ld.is-finished .ld-corner.is-on,
+.ld--reduced .ld-corner { animation: none; opacity: 0.3; }
+
+/* car */
+.ld-car-body { fill: var(--ld-accent); stroke: var(--ld-ink); stroke-width: 1.5; }
+.ld--dark .ld-car-body { stroke: rgba(7, 17, 13, 0.8); }
+.ld-car-core { fill: var(--ld-navy); }
+.ld-car-glow { fill: var(--ld-accent); opacity: 0.45; transition: opacity 0.3s; }
+.ld.is-moving .ld-car-glow { opacity: 0.8; }
+
+/* rain */
+.ld-rain {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* HUD */
+.ld-hud {
+  position: absolute;
+  top: clamp(10px, 3cqw, 22px);
+  right: clamp(10px, 3cqw, 22px);
+  display: grid;
+  gap: 7px;
+  min-width: clamp(128px, 27cqw, 190px);
+  padding: 10px 12px 9px;
+  border: 1px solid var(--ld-rule);
+  border-radius: 4px;
+  background: rgba(var(--ld-bg-rgb), 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  font-size: clamp(9px, 1.9cqw, 11px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 3;
+}
+.ld-hud-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.ld-hud-label { opacity: 0.6; }
+.ld-hud-time {
+  font-variant-numeric: tabular-nums;
+  font-size: 1.35em;
+  letter-spacing: 0.02em;
+}
+.ld-speed {
+  position: relative;
+  flex: 1;
+  height: 3px;
+  background: rgba(var(--ld-fg-rgb), 0.14);
+  overflow: hidden;
+}
+.ld-speed-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--ld-accent);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+.ld--accent-pale .ld-speed-fill { background: var(--ld-green); }
+.ld-hud-kmh { font-variant-numeric: tabular-nums; min-width: 3ch; text-align: right; }
+.ld-sectors { justify-content: flex-start; gap: 5px; }
+.ld-sector {
+  flex: 1;
+  padding: 3px 0 2px;
+  text-align: center;
+  border: 1px solid var(--ld-rule);
+  border-radius: 2px;
+  opacity: 0.55;
+  transition: background-color 0.25s, color 0.25s, opacity 0.25s, border-color 0.25s;
+}
+.ld-sector.is-live {
+  opacity: 1;
+  border-color: var(--ld-yellow);
+  background: var(--ld-yellow);
+  color: var(--ld-ink);
+  animation: ld-pulse 0.9s ease-in-out infinite alternate;
+}
+.ld-sector.is-done {
+  opacity: 1;
+  border-color: var(--ld-green);
+  background: var(--ld-green);
+  color: var(--ld-cream);
+}
+@keyframes ld-pulse { to { opacity: 0.7; } }
+.ld-hud-note {
+  padding-top: 6px;
+  border-top: 1px solid var(--ld-rule);
+  font-size: 0.82em;
+  opacity: 0.5;
+}
+
+.ld-tag {
+  position: absolute;
+  top: clamp(12px, 3.2cqw, 24px);
+  left: clamp(12px, 3.2cqw, 24px);
+  max-width: 45%;
+  font-size: clamp(9px, 1.8cqw, 11px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* hold button */
+.ld-btn {
+  position: absolute;
+  left: clamp(12px, 3.2cqw, 24px);
+  bottom: clamp(12px, 3.2cqw, 24px);
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0.95em 1.5em 0.95em 1.1em;
+  border: 1px solid var(--ld-fg);
+  border-radius: 999px;
+  background: var(--ld-fg);
+  color: var(--ld-bg);
+  font: 500 clamp(10px, 2cqw, 12px) / 1 var(--ld-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  transition: transform 0.2s var(--ld-ease), background-color 0.2s, color 0.2s;
+}
+.ld-btn:hover { transform: translateY(-1px); }
+.ld-btn:focus-visible { outline: 2px solid var(--ld-accent); outline-offset: 3px; }
+.ld-btn-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ld-accent);
+  box-shadow: 0 0 0 0 var(--ld-accent);
+}
+.ld.is-driving .ld-btn {
+  transform: scale(0.97);
+  background: var(--ld-accent);
+  border-color: var(--ld-accent);
+  color: var(--ld-ink);
+}
+.ld.is-driving .ld-btn-dot {
+  background: var(--ld-green);
+  animation: ld-dot 0.5s ease-out infinite;
+}
+@keyframes ld-dot { to { box-shadow: 0 0 0 7px rgba(0, 166, 81, 0); } }
+.ld-btn[hidden] { display: none; }
+
+/* chequered wipe */
+.ld-flag {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  pointer-events: none;
+}
+.ld-flag-col {
+  --sq: 5cqw;
+  flex: 1;
+  height: 100%;
+  background-image: linear-gradient(to bottom, var(--ld-ink) 50%, var(--ld-cream) 50%);
+  background-size: 100% calc(var(--sq) * 2);
+  transform: scaleY(0);
+  transform-origin: 50% 0;
+  animation: ld-flag 0.95s cubic-bezier(0.6, 0, 0.3, 1) both;
+  animation-delay: calc(var(--i) * 22ms);
+}
+.ld-flag-col:nth-child(even) { background-position: 0 var(--sq); transform-origin: 50% 100%; }
+@keyframes ld-flag {
+  0% { transform: scaleY(0); }
+  42% { transform: scaleY(1); }
+  58% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1) translateY(0); opacity: 0; }
+}
+.ld-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  background: var(--ld-cream);
+  opacity: 0;
+  pointer-events: none;
+}
+.ld.is-finished:not(.ld--reduced) .ld-flash { animation: ld-flash 0.7s ease-out 0.62s both; }
+@keyframes ld-flash { 0% { opacity: 0; } 18% { opacity: 0.85; } 100% { opacity: 0; } }
+
+/* finish card */
+.ld-card {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  display: flex;
+  align-items: flex-end;
+  padding: clamp(16px, 5cqw, 40px);
+  background: linear-gradient(to top, rgba(var(--ld-bg-rgb), 0.96) 20%, rgba(var(--ld-bg-rgb), 0.78));
+  -webkit-backdrop-filter: blur(3px);
+  backdrop-filter: blur(3px);
+  -webkit-user-select: text;
+  user-select: text;
+  cursor: default;
+}
+.ld-card[hidden] { display: none; }
+.ld.is-finished:not(.ld--reduced) .ld-card { animation: ld-card 0.7s var(--ld-ease) 0.9s both; }
+@keyframes ld-card { from { opacity: 0; } to { opacity: 1; } }
+.ld.is-finished:not(.ld--reduced) .ld-card-in > * { animation: ld-rise 0.8s var(--ld-ease) both; }
+.ld.is-finished:not(.ld--reduced) .ld-card-in > :nth-child(1) { animation-delay: 1s; }
+.ld.is-finished:not(.ld--reduced) .ld-card-in > :nth-child(2) { animation-delay: 1.08s; }
+.ld.is-finished:not(.ld--reduced) .ld-card-in > :nth-child(3) { animation-delay: 1.18s; }
+.ld.is-finished:not(.ld--reduced) .ld-card-in > :nth-child(4) { animation-delay: 1.28s; }
+.ld.is-finished:not(.ld--reduced) .ld-card-in > :nth-child(5) { animation-delay: 1.4s; }
+@keyframes ld-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+.ld-card-in { display: grid; gap: 0; max-width: 100%; }
+.ld .ld-card-in p { margin: 0; }
+.ld .ld-card-kicker {
+  padding-bottom: 10px;
+  margin-bottom: 4px !important;
+  border-bottom: 1px solid var(--ld-rule);
+  font-size: clamp(9px, 1.9cqw, 12px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.ld .ld-card-title {
+  font-family: var(--ld-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(54px, 20cqw, 168px);
+  line-height: 0.84;
+  letter-spacing: -0.01em;
+  margin-top: 0.06em !important;
+}
+.ld .ld-card-result {
+  font-family: var(--ld-display);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: clamp(22px, 7cqw, 58px);
+  line-height: 1;
+  color: var(--ld-accent);
+  font-variant-numeric: tabular-nums;
+  margin-top: 0.12em !important;
+}
+.ld--accent-pale .ld-card-result {
+  -webkit-text-stroke: 0.035em var(--ld-ink);
+  paint-order: stroke fill;
+}
+.ld .ld-card-note {
+  font-family: var(--ld-serif);
+  font-style: italic;
+  font-size: clamp(16px, 3.6cqw, 26px);
+  line-height: 1.2;
+  margin-top: 0.4em !important;
+  opacity: 0.85;
+}
+.ld-again {
+  justify-self: start;
+  margin-top: clamp(12px, 3cqw, 22px);
+  padding: 0.85em 1.4em;
+  border: 1px solid var(--ld-fg);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ld-fg);
+  font: 500 clamp(10px, 1.9cqw, 12px) / 1 var(--ld-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.ld-again:hover { background: var(--ld-fg); color: var(--ld-bg); }
+.ld-again:focus-visible { outline: 2px solid var(--ld-accent); outline-offset: 3px; }
+
+.ld-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (max-width: 520px) {
+  .ld-hud-note { display: none; }
+  .ld-tag { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ld-flag-col,
+  .ld .ld-flash,
+  .ld .ld-card,
+  .ld .ld-card-in > *,
+  .ld-corner.is-on,
+  .ld-sector.is-live,
+  .ld.is-driving .ld-btn-dot { animation: none !important; }
+  .ld-flag-col { display: none; }
+}
