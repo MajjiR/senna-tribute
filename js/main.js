@@ -222,6 +222,52 @@ async function setupVideo(animated) {
     } });
 }
 
+/* The machine: realistic 3D car with labelled parts */
+const SPOT_TEXT = {
+  'front-wing': ['Front wing', 'Two elements, flat endplates'],
+  'cockpit': ['Cockpit', 'Driver lying almost flat'],
+  'sidepod': ['Sidepods', 'Long, low, radiators inside'],
+  'rear-wing': ['Rear wing', 'Tall endplates, beam wing below'],
+  'rear-tyre': ['Rear slicks', 'Much wider than the fronts'],
+};
+async function setupMachine(animated) {
+  const sec = $('#machine');
+  if (!sec) return;
+  const mod = await safeImport('./car3d.js');
+  let car = null;
+  try { car = mod && mod.createCar3D($('#car3d-canvas'), { reducedMotion: !animated }); } catch (e) { console.warn('[senna] car3d failed', e); }
+  if (!car || car.failed) { sec.classList.add('no-gl'); return; }
+  car.resize();
+  addEventListener('resize', () => car.resize());
+  if (!animated) { car.setProgress(0.1); car.renderOnce(); return; }
+  const layer = $('.machine__spots', sec);
+  const spots = (car.hotspots || []).map((h) => {
+    const [t, d] = SPOT_TEXT[h.id] || [h.label || h.id, ''];
+    const el = document.createElement('div');
+    el.className = 'spot';
+    el.innerHTML = `<span class="spot__dot"></span><span class="spot__line"></span><span class="spot__label"><b>${t}</b>${d}</span>`;
+    layer.append(el);
+    return { h, el };
+  });
+  let prog = 0, active = false;
+  ScrollTrigger.create({ trigger: sec, start: 'top bottom', end: 'bottom top', onToggle: (s) => { active = s.isActive; active ? car.start() : car.stop(); } });
+  ScrollTrigger.create({ trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true,
+    onUpdate: (s) => { prog = s.progress; car.setProgress(prog); gsap.set($('.machine__bar i', sec), { scaleX: prog }); } });
+  gsap.fromTo($('.machine__head', sec), { autoAlpha: 1 }, { autoAlpha: 0, y: -40, ease: 'none', scrollTrigger: { trigger: sec, start: 'top top', end: () => '+=' + innerHeight * 0.8, scrub: true } });
+  if (FINE) sec.addEventListener('pointermove', (e) => car.setPointer(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight * 2 - 1)), { passive: true });
+  gsap.ticker.add(() => {
+    if (!active) return;
+    car.setVelocity(VEL);
+    for (const { h, el } of spots) {
+      const sc = h.getScreen && h.getScreen();
+      const near = Math.abs(prog - (h.p ?? 0.5)) < 0.16;
+      const on = !!(sc && sc.visible && near);
+      el.classList.toggle('on', on);
+      if (sc) el.style.transform = `translate3d(${sc.x.toFixed(1)}px, ${(sc.y - 6).toFixed(1)}px, 0)`;
+    }
+  });
+}
+
 /* ───────── Boot ───────── */
 buildChart();
 const photosReady = fillPhotoSlots();
@@ -240,6 +286,7 @@ async function bootStatic() {
   buildCircuits(circuitMod);
   setupMoments();
   setupVideo(false);
+  setupMachine(false);
   setupLaps(lapMod, true);
   setupDepth(depthMod, true);
   setupStory(storyMod, true);
@@ -312,6 +359,7 @@ async function bootAnimated() {
 
   setupMoments();
   setupVideo(true);
+  setupMachine(true);
   const laps = setupLaps(lapMod, false);
   const depthsP = setupDepth(depthMod, false);
   setupStory(storyMod, false);
