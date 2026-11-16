@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Depth photo test</title>
+<link rel="stylesheet" href="../css/style.css">
+<style>
+  body { padding: 24px 16px 140px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 40px; max-width: 1100px; margin: 0 auto; align-items: start; }
+  .ctl { position: fixed; left: 12px; bottom: 12px; padding: 10px 12px; background: rgba(0,0,0,.6); border: 1px solid rgba(243,239,228,.2); border-radius: 8px; display: grid; gap: 6px; width: min(360px, calc(100vw - 24px)); font: 12px/1.4 system-ui, sans-serif; z-index: 10; }
+  .ctl label { display: grid; grid-template-columns: 64px 1fr 40px; gap: 8px; align-items: center; }
+  .ctl input[type=range] { width: 100%; }
+</style>
+</head>
+<body>
+<div class="grid">
+  <figure class="slot" data-slot="portrait" style="--ar: 4 / 5">
+    <div class="slot__media"><img src="../assets/slots/portrait.svg" alt="Placeholder portrait art" loading="lazy"></div>
+    <span class="slot__tag mono">portrait.svg</span><figcaption>Portrait slot (derived depth)</figcaption>
+  </figure>
+  <figure class="slot" data-slot="saopaulo" style="--ar: 12 / 7">
+    <div class="slot__media"><img src="../assets/slots/saopaulo.svg" alt="Placeholder São Paulo art" loading="lazy"></div>
+    <span class="slot__tag mono">saopaulo.svg</span><figcaption>São Paulo slot (derived depth)</figcaption>
+  </figure>
+</div>
+<div class="ctl">
+  <label>velocity <input id="v" type="range" min="-1" max="1" step="0.01" value="0"><output id="vo">0</output></label>
+  <label>strength <input id="s" type="range" min="0" max="2" step="0.05" value="1"><output id="so">1</output></label>
+  <div><input id="rm" type="checkbox"> reduced motion (reloads) &nbsp; <span id="status"></span></div>
+</div>
+<script type="module">
+  import { attachDepth } from '../js/depth-photo.js';
+  const $ = (id) => document.getElementById(id);
+  const params = new URLSearchParams(location.search);
+  const reducedMotion = params.has('rm');
+  const strength = parseFloat(params.get('s') || '1');
+  $('rm').checked = reducedMotion;
+  $('s').value = strength; $('so').textContent = strength;
+  $('rm').addEventListener('change', (e) => { e.target.checked ? params.set('rm', '') : params.delete('rm'); location.search = params; });
+  $('s').addEventListener('change', (e) => { params.set('s', e.target.value); location.search = params; });
+
+  const handles = [...document.querySelectorAll('.slot')].map((f) => attachDepth(f, { reducedMotion, strength }));
+  window.__depth = handles;
+  const v = $('v');
+  v.addEventListener('input', () => { $('vo').textContent = (+v.value).toFixed(2); });
+  // feed the velocity every frame while non-zero, like a scroll loop would
+  (function loop() {
+    const val = +v.value;
+    if (val !== 0) handles.forEach((h) => h.setVelocity(val));
+    requestAnimationFrame(loop);
+  })();
+  setTimeout(() => { $('status').textContent = handles.map((h) => (h.failed ? 'failed' : 'ok')).join(' / '); }, 800);
+</script>
+</body>
+</html>

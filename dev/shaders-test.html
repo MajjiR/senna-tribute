@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shader test</title>
+<style>
+  html, body { margin: 0; background: #07110D; color: #F3EFE4; font: 13px/1.4 system-ui, sans-serif; }
+  section { position: relative; }
+  canvas { display: block; width: 100vw; height: 60vh; }
+  h2 { position: absolute; left: 16px; top: 12px; margin: 0; font-size: 28px; pointer-events: none; }
+  #panel { position: fixed; right: 12px; bottom: 12px; z-index: 2; padding: 10px 12px; background: rgba(7, 17, 13, .85); border: 1px solid rgba(243, 239, 228, .25); }
+  #panel label { display: flex; gap: 8px; align-items: center; justify-content: space-between; margin: 4px 0; }
+  #panel output { width: 3.5em; text-align: right; }
+  #status { margin-top: 6px; opacity: .7; }
+</style>
+</head>
+<body>
+<section><canvas data-kind="rain"></canvas><h2>rain</h2></section>
+<section><canvas data-kind="speed"></canvas><h2>speed</h2></section>
+<section><canvas data-kind="flow"></canvas><h2>flow</h2></section>
+
+<div id="panel">
+  <label>intensity <input type="range" data-param="intensity" min="0" max="1" step="0.01" value="0.6"><output>0.60</output></label>
+  <label>velocity <input type="range" data-param="velocity" min="-1" max="1" step="0.01" value="0"><output>0.00</output></label>
+  <label>progress <input type="range" data-param="progress" min="0" max="1" step="0.01" value="0"><output>0.00</output></label>
+  <label>reduced motion <input type="checkbox" id="rm"></label>
+  <div id="status"></div>
+</div>
+
+<script type="module">
+  // Serve over http (module imports do not load from file://). Add ?rm=1 for reduced motion.
+  import { createShaderCanvas } from './../js/shaders.js';
+
+  const reducedMotion = new URLSearchParams(location.search).has('rm');
+  const rm = document.getElementById('rm');
+  rm.checked = reducedMotion;
+  rm.addEventListener('change', () => { location.search = rm.checked ? '?rm=1' : ''; });
+
+  const items = [...document.querySelectorAll('canvas')].map((canvas) => {
+    const fx = createShaderCanvas(canvas, canvas.dataset.kind, { reducedMotion });
+    canvas.addEventListener('pointermove', (e) => {
+      const r = canvas.getBoundingClientRect();
+      fx.setPointer((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height);
+    });
+    fx.start();
+    return { kind: canvas.dataset.kind, fx };
+  });
+
+  document.getElementById('status').textContent =
+    items.map((i) => i.kind + ': ' + (i.fx.failed ? 'FAILED' : 'ok')).join(' | ');
+
+  for (const input of document.querySelectorAll('input[data-param]')) {
+    const apply = () => {
+      input.nextElementSibling.textContent = Number(input.value).toFixed(2);
+      for (const i of items) i.fx.set(input.dataset.param, Number(input.value));
+    };
+    input.addEventListener('input', apply);
+    apply();
+  }
+  window.addEventListener('resize', () => items.forEach((i) => i.fx.resize()));
+</script>
+</body>
+</html>

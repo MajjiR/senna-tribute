@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lap drive test</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/lap-drive.css">
+<style>
+  body { margin: 0; background: var(--cream); color: var(--ink); }
+  .t-wrap { max-width: 1400px; margin: 0 auto; padding: 40px 16px 120px; display: grid; gap: 48px; }
+  .t-row { display: grid; grid-template-columns: 1fr 40%; gap: 40px; align-items: center; padding: 32px; border-radius: 8px; }
+  .t-row.dark { background: var(--ink); color: var(--cream); }
+  .t-row h2 { font: 900 56px/0.9 var(--f-display); text-transform: uppercase; margin: 0 0 12px; }
+  .t-row > div > p { font: 12px/1.6 var(--f-mono); text-transform: uppercase; letter-spacing: .1em; opacity: .7; margin: 0; }
+  .t-ctrl { font: 12px var(--f-mono); display: flex; gap: 16px; align-items: center; }
+  @media (max-width: 760px) { .t-row { grid-template-columns: 1fr; padding: 16px; } }
+</style>
+</head>
+<body>
+<div class="t-wrap">
+  <div class="t-ctrl">
+    <label><input type="checkbox" id="rm"> reduced motion (reloads)</label>
+    <span id="status"></span>
+  </div>
+  <div id="rows"></div>
+</div>
+<script type="module">
+  import { createLapDrive } from '../js/lap-drive.js';
+  import { CIRCUITS } from '../js/circuits.js';
+
+  const reducedMotion = new URLSearchParams(location.search).has('rm');
+  const rmBox = document.getElementById('rm');
+  rmBox.checked = reducedMotion;
+  rmBox.addEventListener('change', (e) => { location.search = e.target.checked ? '?rm' : ''; });
+
+  const rows = [
+    { id: 'estoril', wet: true, theme: 'dark', finish: { kicker: '21 April 1985 · Lotus', title: 'Won', result: '+1:02.978', note: 'First Grand Prix win, in the rain' } },
+    { id: 'monaco', theme: 'light', accent: '#1b4fd8', finish: { kicker: '1984 · Monaco', title: 'P2', result: 'Rain-shortened', note: 'Sample finish copy for testing' } },
+    { id: 'suzuka', theme: 'dark', accent: '#00a651', finish: { kicker: '1988 · Suzuka', title: 'Champion', result: 'P1', note: 'Sample finish copy for testing' } },
+    { id: 'interlagos', theme: 'light', finish: { kicker: '1991 · Interlagos', title: 'Won', result: 'Home win', note: 'Sample finish copy for testing' } },
+    { id: 'donington', theme: 'dark', finish: { kicker: '1993 · Donington', title: 'Won', result: '+1:23.199', note: 'Sample finish copy for testing' } },
+    { id: 'imola', theme: 'light', accent: '#0b1f4b', finish: { kicker: 'Imola', title: 'Remembered', result: '1960 – 1994', note: 'Sample finish copy for testing' } },
+  ];
+
+  const host = document.getElementById('rows');
+  const instances = [];
+  for (const r of rows) {
+    const row = document.createElement('section');
+    row.className = 't-row' + (r.theme === 'dark' ? ' dark' : '');
+    row.innerHTML = `<div><h2>${CIRCUITS[r.id].name}</h2><p>${r.id}${r.wet ? ' · wet' : ''} · ${r.theme}</p></div><div class="lapdrive"></div>`;
+    host.appendChild(row);
+    const lap = createLapDrive(row.querySelector('.lapdrive'), {
+      circuitId: r.id, wet: !!r.wet, accent: r.accent, theme: r.theme, finish: r.finish, reducedMotion,
+    });
+    instances.push(lap);
+    window.__laps = instances;
+  }
+
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      const i = [...host.children].indexOf(e.target);
+      instances[i]?.setActive(e.isIntersecting);
+    }
+  });
+  [...host.children].forEach((c) => io.observe(c));
+  document.getElementById('status').textContent = `${instances.length} instances`;
+</script>
+</body>
+</html>
