@@ -187,6 +187,40 @@ function setupStory(storyMod, reducedMotion) {
   catch (e) { console.warn('[senna] story failed', e); return null; }
 }
 
+/* Scroll-scrubbed video slot (fills from assets/video/video.json) */
+async function setupVideo(animated) {
+  const sec = $('#video');
+  if (!sec) return;
+  let cfg = {};
+  try { const r = await fetch('assets/video/video.json'); if (r.ok) cfg = await r.json(); } catch (e) { /* optional */ }
+  if (!cfg.src) return;
+  const v = $('.vslot__video', sec);
+  if (cfg.poster) v.poster = cfg.poster;
+  v.src = cfg.src;
+  const credit = [cfg.caption, cfg.credit].filter(Boolean).join(' · ');
+  $('.vslot__credit', sec).textContent = credit;
+  if (credit) {
+    const ul = $('#photo-credits'), li = document.createElement('li');
+    li.textContent = 'Video: ' + credit;
+    if (ul.textContent.includes('No photographs')) ul.replaceChildren(li); else ul.append(li);
+  }
+  v.addEventListener('loadeddata', () => sec.classList.add('has-video'), { once: true });
+  if (!animated) { v.controls = true; v.removeAttribute('aria-hidden'); return; }
+  // Seek straight from scroll (Lenis already smooths it); queue one pending seek while the decoder is busy.
+  let pending = null;
+  const seek = (t) => {
+    if (v.seeking) { pending = t; return; }
+    if (Math.abs(v.currentTime - t) > 0.01) v.currentTime = t;
+  };
+  v.addEventListener('seeked', () => { if (pending !== null) { const t = pending; pending = null; seek(t); } });
+  const bar = $('.vslot__bar i', sec);
+  ScrollTrigger.create({ trigger: sec, start: 'top top', end: 'bottom bottom', scrub: true,
+    onUpdate: (s) => {
+      gsap.set(bar, { scaleX: s.progress });
+      if (v.duration) seek(s.progress * (v.duration - 0.05));
+    } });
+}
+
 /* ───────── Boot ───────── */
 buildChart();
 const photosReady = fillPhotoSlots();
@@ -204,6 +238,7 @@ async function bootStatic() {
   const [heroMod, shaderMod, circuitMod, lapMod, depthMod, storyMod, helmetMod] = await modules;
   buildCircuits(circuitMod);
   setupMoments();
+  setupVideo(false);
   setupLaps(lapMod, true);
   setupDepth(depthMod, true);
   setupStory(storyMod, true);
@@ -275,6 +310,7 @@ async function bootAnimated() {
   else { helmet.setIntro(0); helmet.setProgress(0); helmet.resize(); helmet.start(); hero.classList.add('has-helmet'); }
 
   setupMoments();
+  setupVideo(true);
   const laps = setupLaps(lapMod, false);
   const depthsP = setupDepth(depthMod, false);
   setupStory(storyMod, false);

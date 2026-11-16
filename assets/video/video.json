@@ -1,0 +1,7 @@
+{
+  "_readme": "Scroll-scrubbed video slot. Put an MP4 you have the rights to in this folder and set src (and optionally poster, caption, credit). For smooth scrubbing, encode with a keyframe on every frame, e.g.: ffmpeg -i input.mp4 -vf scale=1920:-2 -c:v libx264 -g 1 -crf 23 -pix_fmt yuv420p -an -movflags +faststart scrub.mp4",
+  "src": "",
+  "poster": "",
+  "caption": "",
+  "credit": ""
+}
