@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1200 1000" fill="none">
+  <!-- Original procedural-style side profile of a late-1980s full-face racing helmet.
+       Abstract homage palette only: no logos, lettering, numbers or sticker panels. -->
+  <defs>
+    <path id="shell" d="M300 772 C232 694 200 566 214 452 C232 278 380 142 580 136 C770 131 902 214 952 326 C962 350 970 372 976 396 C990 470 1012 560 1026 650 C1036 716 1044 764 1036 796 C1018 816 966 824 900 822 C760 818 522 802 300 772 Z"/>
+    <clipPath id="shellClip"><use href="#shell"/></clipPath>
+    <path id="visor" d="M786 396 C826 336 898 304 962 314 C988 380 1004 460 1006 546 C944 552 862 528 798 484 C778 458 774 424 786 396 Z"/>
+    <clipPath id="visorClip"><use href="#visor"/></clipPath>
+
+    <radialGradient id="shellBase" cx="0.42" cy="0.28" r="0.82">
+      <stop offset="0" stop-color="#FFF4A8"/>
+      <stop offset="0.22" stop-color="#FFE21A"/>
+      <stop offset="0.55" stop-color="#FFD400"/>
+      <stop offset="0.82" stop-color="#D99E00"/>
+      <stop offset="1" stop-color="#7A5600"/>
+    </radialGradient>
+    <linearGradient id="shellShade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#000" stop-opacity="0"/>
+      <stop offset="0.6" stop-color="#000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#2a1c00" stop-opacity="0.55"/>
+    </linearGradient>
+    <linearGradient id="ribbon" x1="760" y1="820" x2="380" y2="140" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00A651"/>
+      <stop offset="0.35" stop-color="#00A651"/>
+      <stop offset="0.95" stop-color="#1B4FD8"/>
+    </linearGradient>
+    <linearGradient id="ribbonShade" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fff" stop-opacity="0.18"/>
+      <stop offset="0.5" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0.3"/>
+    </linearGradient>
+    <linearGradient id="visorFill" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#11181d"/>
+      <stop offset="0.45" stop-color="#05080a"/>
+      <stop offset="1" stop-color="#020304"/>
+    </linearGradient>
+    <linearGradient id="visorBand" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.3" stop-color="#fffaf0" stop-opacity="0.85"/>
+      <stop offset="0.75" stop-color="#cfe8ff" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="irid" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#00A651" stop-opacity="0"/>
+      <stop offset="0.55" stop-color="#00A651" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#1B4FD8" stop-opacity="0.8"/>
+    </linearGradient>
+    <radialGradient id="disc" cx="0.4" cy="0.35" r="0.7">
+      <stop offset="0" stop-color="#4a4f55"/>
+      <stop offset="0.6" stop-color="#22262a"/>
+      <stop offset="1" stop-color="#0d0f11"/>
+    </radialGradient>
+    <radialGradient id="screw" cx="0.35" cy="0.3" r="0.7">
+      <stop offset="0" stop-color="#e8ecef"/>
+      <stop offset="1" stop-color="#6c7277"/>
+    </radialGradient>
+    <linearGradient id="crownHi" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.45" stop-color="#fff" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="rimGreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#00A651" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#2bd47f" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#00A651" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="rimBlue" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#1B4FD8" stop-opacity="0"/>
+      <stop offset="0.6" stop-color="#4f7dff" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#1B4FD8" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="blur18" x="-30%" y="-200%" width="160%" height="500%"><feGaussianBlur stdDeviation="18"/></filter>
+    <filter id="blur6" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="6"/></filter>
+    <filter id="blur2"><feGaussianBlur stdDeviation="2"/></filter>
+  </defs>
+
+  <!-- contact shadow -->
+  <ellipse cx="640" cy="842" rx="430" ry="34" fill="#000" opacity="0.55" filter="url(#blur18)"/>
+  <ellipse cx="660" cy="830" rx="300" ry="14" fill="#000" opacity="0.7" filter="url(#blur6)"/>
+
+  <!-- shell -->
+  <use href="#shell" fill="url(#shellBase)"/>
+
+  <g clip-path="url(#shellClip)">
+    <!-- tapered double ribbon (green to blue) with cream pinstripe -->
+    <path d="M676 840 C630 712 566 556 496 400 C452 300 420 214 398 118 L430 116 C458 210 500 298 552 392 C634 540 730 694 812 840 Z" fill="url(#ribbon)"/>
+    <path d="M676 840 C630 712 566 556 496 400 C452 300 420 214 398 118 L430 116 C458 210 500 298 552 392 C634 540 730 694 812 840 Z" fill="url(#ribbonShade)"/>
+    <path d="M616 840 C572 736 520 620 468 516 C440 460 418 410 404 372 C434 418 466 470 500 530 C556 630 610 736 650 840 Z" fill="url(#ribbon)"/>
+    <path d="M834 840 C752 692 664 540 580 394 C526 300 482 214 452 112" stroke="#F3EFE4" stroke-width="7" stroke-linecap="round"/>
+
+    <!-- lower-body shading and rim lights -->
+    <use href="#shell" fill="url(#shellShade)"/>
+    <path d="M232 690 C206 600 200 500 222 420 C246 330 300 250 360 200" stroke="url(#rimGreen)" stroke-width="26" filter="url(#blur6)"/>
+    <path d="M760 812 C860 818 960 818 1030 796" stroke="url(#rimBlue)" stroke-width="18" filter="url(#blur6)"/>
+
+    <!-- clearcoat highlights -->
+    <path d="M330 300 C400 210 500 168 610 166 C700 166 780 196 840 240" stroke="url(#crownHi)" stroke-width="30" stroke-linecap="round" opacity="0.8" filter="url(#blur6)"/>
+    <path d="M380 262 C450 206 530 186 610 186" stroke="#fff" stroke-width="7" stroke-linecap="round" opacity="0.85" filter="url(#blur2)"/>
+    <ellipse cx="520" cy="250" rx="46" ry="16" transform="rotate(-18 520 250)" fill="#fff" opacity="0.9" filter="url(#blur2)"/>
+    <path d="M260 560 C262 640 286 700 320 744" stroke="#fff" stroke-width="5" stroke-linecap="round" opacity="0.35" filter="url(#blur2)"/>
+    <path d="M940 600 C960 680 984 740 1010 780" stroke="#fffbe0" stroke-width="10" stroke-linecap="round" opacity="0.55" filter="url(#blur6)"/>
+  </g>
+
+  <!-- shell edge -->
+  <use href="#shell" stroke="#5c4000" stroke-opacity="0.45" stroke-width="2"/>
+
+  <!-- top intake vent -->
+  <path d="M846 200 C866 196 890 204 904 218 C900 230 880 232 860 226 C848 220 842 210 846 200 Z" fill="#26292d"/>
+  <path d="M884 214 C892 216 898 220 902 224" stroke="#000" stroke-width="5" stroke-linecap="round"/>
+  <path d="M852 204 C866 200 882 204 892 210" stroke="#7d848a" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- eyeport rubber trim -->
+  <path d="M776 392 C818 324 896 290 968 300 C996 372 1014 458 1016 556 C944 564 852 538 790 494 C764 464 762 420 776 392 Z" fill="#0b0b0b"/>
+
+  <!-- visor -->
+  <use href="#visor" fill="url(#visorFill)"/>
+  <g clip-path="url(#visorClip)">
+    <path d="M770 452 C850 432 930 424 1020 430 L1020 446 C930 440 852 448 770 470 Z" fill="url(#visorBand)"/>
+    <path d="M770 480 C860 462 940 458 1020 462 L1020 470 C940 466 862 472 770 492 Z" fill="#9fd8ff" opacity="0.18"/>
+    <path d="M780 380 C850 340 920 326 1000 330" stroke="#fff" stroke-width="3" opacity="0.35"/>
+    <path d="M948 320 C980 390 996 470 1000 548" stroke="url(#irid)" stroke-width="22" filter="url(#blur2)"/>
+    <!-- raised plain top strip -->
+    <path d="M782 400 C826 336 898 304 962 314 L968 336 C904 328 838 354 796 414 Z" fill="#090a0b"/>
+    <path d="M790 396 C832 340 900 314 960 320" stroke="#4b545a" stroke-width="2" opacity="0.8"/>
+  </g>
+  <use href="#visor" stroke="#000" stroke-width="3"/>
+  <!-- visor lift tab -->
+  <path d="M990 540 C1004 540 1014 546 1016 556 C1006 562 992 560 984 552 Z" fill="#0a0b0c"/>
+
+  <!-- pivot disc -->
+  <circle cx="800" cy="438" r="38" fill="url(#disc)" stroke="#000" stroke-width="2"/>
+  <circle cx="800" cy="438" r="26" stroke="#9aa1a7" stroke-width="2.5" opacity="0.9"/>
+  <circle cx="800" cy="438" r="10" fill="url(#screw)"/>
+  <path d="M794 432 L806 444" stroke="#2a2d30" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M778 420 C786 410 798 406 810 408" stroke="#fff" stroke-width="2" opacity="0.35" stroke-linecap="round"/>
+
+  <!-- chin vent grille (seen edge-on) -->
+  <path d="M1020 626 C1034 628 1040 640 1040 664 C1040 690 1034 702 1024 704 C1018 680 1016 650 1020 626 Z" fill="#25282c"/>
+  <path d="M1026 640 L1036 641 M1026 654 L1038 655 M1027 668 L1038 669 M1027 682 L1037 683" stroke="#000" stroke-width="4" stroke-linecap="round"/>
+
+  <path d="M968 812 C1000 808 1024 800 1038 786" stroke="#fff6c0" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+
+  <!-- rolled, stitched lining at the neck opening -->
+  <path d="M296 772 C520 804 760 820 900 824 C966 826 1014 818 1036 798" stroke="#111312" stroke-width="22" stroke-linecap="round"/>
+  <path d="M300 768 C522 800 762 816 900 820 C962 822 1008 814 1030 796" stroke="#2a2e2c" stroke-width="5" stroke-linecap="round"/>
+  <path d="M300 776 C522 808 762 824 900 828 C962 830 1008 822 1030 804" stroke="#666b68" stroke-width="2" stroke-dasharray="10 7" stroke-linecap="round"/>
+</svg>

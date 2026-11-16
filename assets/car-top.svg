@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 1100" role="img" aria-label="Plan-view silhouette of a generic open-wheel racing car">
+  <defs>
+    <mask id="ct-cut" maskUnits="userSpaceOnUse" x="0" y="0" width="480" height="1100">
+      <rect width="480" height="1100" fill="#fff"/>
+      <!-- cockpit opening -->
+      <path d="M240 498 C262 498 270 520 270 556 C270 596 262 622 240 622 C218 622 210 596 210 556 C210 520 218 498 240 498 Z" fill="#000"/>
+      <g fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <!-- sidepod inner edges and radiator exits -->
+        <path d="M300 540 C304 640 304 720 296 800"/>
+        <path d="M180 540 C176 640 176 720 184 800"/>
+        <path d="M318 760 L372 742 M318 780 L366 764"/>
+        <path d="M162 760 L108 742 M162 780 L114 764"/>
+        <!-- engine cover spine -->
+        <path d="M226 640 L230 900 M254 640 L250 900"/>
+        <!-- nose joint -->
+        <path d="M218 300 L262 300"/>
+        <!-- wing flap lines -->
+        <path d="M96 150 L214 150 M266 150 L384 150"/>
+        <path d="M146 962 L334 962"/>
+      </g>
+    </mask>
+  </defs>
+
+  <g class="silhouette" fill="currentColor">
+    <!-- suspension arms -->
+    <g fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round">
+      <path d="M266 296 L396 328 L272 368"/>
+      <path d="M214 296 L84 328 L208 368"/>
+      <path d="M296 872 L376 904 L286 932"/>
+      <path d="M184 872 L104 904 L194 932"/>
+    </g>
+    <g mask="url(#ct-cut)">
+      <!-- front wing with endplates -->
+      <path d="M80 108 H93 V120 H387 V108 H400 V184 H387 V170 H93 V184 H80 Z"/>
+      <!-- body: nose cone, tub, sidepods, coke-bottle rear, gearbox -->
+      <path d="M240 98 C250 98 254 106 255 120 L262 250 L270 330 C276 400 282 450 292 490 L296 520 L300 532 L376 548 Q384 550 384 560 L384 770 C384 810 350 840 315 870 L292 900 L284 962 L196 962 L188 900 L165 870 C130 840 96 810 96 770 L96 560 Q96 550 104 548 L180 532 L184 520 L188 490 C198 450 204 400 210 330 L218 250 L225 120 C226 106 230 98 240 98 Z"/>
+      <!-- mirrors -->
+      <path d="M296 500 H322 V512 H296 Z M158 500 H184 V512 H158 Z"/>
+      <!-- rear wing with endplates -->
+      <path d="M130 916 H143 V930 H337 V916 H350 V1004 H337 V996 H143 V1004 H130 Z"/>
+    </g>
+    <!-- helmet -->
+    <circle cx="240" cy="572" r="23"/>
+    <!-- wheels -->
+    <rect x="25" y="265" width="60" height="130" rx="11"/>
+    <rect x="395" y="265" width="60" height="130" rx="11"/>
+    <rect x="20" y="838" width="86" height="134" rx="13"/>
+    <rect x="374" y="838" width="86" height="134" rx="13"/>
+  </g>
+
+  <g class="detail" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+    <!-- steering arms -->
+    <path d="M268 316 L394 312 M212 316 L86 312"/>
+    <!-- pushrods -->
+    <path d="M276 344 L394 336 M204 344 L86 336"/>
+    <!-- driveshafts -->
+    <path d="M290 904 L374 904 M190 904 L106 904"/>
+    <!-- cockpit rim -->
+    <path d="M222 520 Q240 508 258 520"/>
+  </g>
+</svg>
