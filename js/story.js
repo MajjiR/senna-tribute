@@ -1180,7 +1180,7 @@ function buildMarkup(section, staticMode) {
     </li>`).join('');
   section.innerHTML = `
     <div class="st-inner">
-      ${staticMode ? '' : '<canvas class="st-canvas" aria-hidden="true"></canvas><div class="st-shade" aria-hidden="true"></div>'}
+      ${staticMode ? '' : '<canvas class="st-gl" aria-hidden="true"></canvas><canvas class="st-canvas" aria-hidden="true"></canvas><div class="st-shade" aria-hidden="true"></div>'}
       <ol class="st-chapters">${items}</ol>
       ${staticMode ? '' : '<div class="st-rail" aria-hidden="true"><i class="st-rail__fill"></i></div>'}
     </div>`;
@@ -1285,14 +1285,23 @@ export function initStory(section, { gsap, ScrollTrigger, reducedMotion = false,
   collect();
 
   const view = { W: 0, H: 0, dpr: 1 };
+  // WebGL renderer (js/story3d.js) loads asynchronously; until then — or if
+  // WebGL / three is unavailable — the 2D canvas scenes render instead.
+  let gl3d = null;
+  const glCanvas = section.querySelector('.st-gl');
+  let dead = false;
   const S = { time: 0, vel: 0, fb: { x: 0, y: 0, w: 0, h: 0 }, portrait: false, still: false };
   const resize = () => {
     const W = inner.clientWidth || window.innerWidth;
     const H = inner.clientHeight || window.innerHeight;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     view.W = W; view.H = H; view.dpr = dpr;
-    for (const c of [canvas, bufA, bufB]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); }
+    for (const c of [canvas, bufA, bufB]) {
+      const small = gl3d && c !== canvas;
+      c.width = small ? 1 : Math.round(W * dpr); c.height = small ? 1 : Math.round(H * dpr);
+    }
     canvas.style.width = W + 'px'; canvas.style.height = H + 'px';
+    if (gl3d) gl3d.resize(W, H, window.devicePixelRatio || 1);
     const mobile = W <= 820;
     S.portrait = mobile || H > W;
     S.fb = S.portrait
@@ -1358,13 +1367,25 @@ export function initStory(section, { gsap, ScrollTrigger, reducedMotion = false,
     if (!frozen) S.time += dt;
 
     const { W, H, dpr } = view;
+    if (gl3d) {
+      const next = !ch.finale && CHAPTERS[i + 1];
+      const m = next && t > 1 - TW ? (t - (1 - TW)) / TW : 0;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      try {
+        gl3d.render({ key: ch.scene, t, nextKey: next ? next.scene : null, m, tr: ch.tr, trColor: ch.trColor, S, dt, hud: ctx });
+      } catch (e) {
+        console.warn('[story] webgl render failed, falling back to 2D', e);
+        try { gl3d.dispose(); } catch (e2) { /* ignore */ }
+        gl3d = null; section.classList.remove('st--gl'); resize();
+      }
+    }
     const draw = (c, sceneKey, tt) => {
       c.setTransform(dpr, 0, 0, dpr, 0, 0);
       c.globalAlpha = 1;
       c.globalCompositeOperation = 'source-over';
       SCENES[sceneKey](c, W, H, tt, S);
     };
-    if (!ch.finale && t > 1 - TW && CHAPTERS[i + 1]) {
+    if (gl3d) { /* rendered above */ } else if (!ch.finale && t > 1 - TW && CHAPTERS[i + 1]) {
       const m = (t - (1 - TW)) / TW;
       draw(ctxA, ch.scene, t);
       draw(ctxB, CHAPTERS[i + 1].scene, 0);
@@ -1410,9 +1431,22 @@ export function initStory(section, { gsap, ScrollTrigger, reducedMotion = false,
   frame(0);
   ScrollTrigger.refresh();
 
+  import('./story3d.js')
+    .then((mod) => mod.createStory3D({ canvas: glCanvas, tracks: TRACKS, mobile: window.innerWidth <= 820, finale: F }))
+    .then((r) => {
+      if (dead) { r.dispose(); return; }
+      gl3d = r;
+      section.classList.add('st--gl');
+      resize();
+      frame(0);
+    })
+    .catch((e) => { console.warn('[story] WebGL scenes unavailable, using 2D', e); if (glCanvas) glCanvas.remove(); });
+
   return {
     destroy() {
+      dead = true;
       stop();
+      if (gl3d) { try { gl3d.dispose(); } catch (e) { /* ignore */ } gl3d = null; }
       io.disconnect();
       clearTimeout(rto);
       window.removeEventListener('resize', onResize);
