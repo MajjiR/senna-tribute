@@ -16,7 +16,8 @@ const SEASONS = [
 
 /* ───────── Optional modules (generated assets). The page still works if one fails. ───────── */
 const safeImport = (p) => import(p).catch((e) => { console.warn('[senna] optional module failed:', p, e); return null; });
-const MOD_NAMES = ['hero-scene', 'shaders', 'circuits', 'lap-drive', 'depth-photo', 'story', 'helmet-scene'];
+// The 3D helmet (js/helmet-scene.js) is kept in the repo but no longer loaded: the hero opens on the car.
+const MOD_NAMES = ['hero-scene', 'shaders', 'circuits', 'lap-drive', 'depth-photo', 'story'];
 const modules = Promise.all(MOD_NAMES.map((n) => safeImport(`./${n}.js`)));
 const NO_MODS = MOD_NAMES.map(() => null);
 let VEL = 0; // smoothed scroll velocity, shared with modules
