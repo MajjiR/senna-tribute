@@ -1,0 +1,50 @@
+{
+  "_readme": "Fill a photo slot by adding an entry keyed by slot id (portrait, karting, rain, cockpit, podium, saopaulo). Put the image file in this folder. Only use photos you have the rights to, and give the credit the licence requires. Example: \"portrait\": { \"src\": \"assets/photos/portrait.jpg\", \"alt\": \"Ayrton Senna, 1988\", \"caption\": \"Suzuka, 1988\", \"credit\": \"Photographer Name\", \"licence\": \"CC BY-SA 4.0\", \"source\": \"https://commons.wikimedia.org/...\" }",
+  "slots": {
+    "portrait": {
+      "src": "assets/photos/portrait.jpg",
+      "alt": "Ayrton Senna — Silverstone paddock, 1993",
+      "caption": "Silverstone paddock, 1993",
+      "credit": "Martin Lee from London, UK",
+      "licence": "CC BY-SA 2.0, via Wikimedia Commons (resized)",
+      "licenceUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Ayrton_Senna_in_the_paddock_before_the_1993_British_Grand_Prix_(33686752075).jpg"
+    },
+    "takeover-1": {
+      "src": "assets/photos/takeover-1.jpg",
+      "alt": "Ayrton Senna — Spa-Francorchamps, 1991",
+      "caption": "Spa-Francorchamps, 1991",
+      "credit": "George Voudouris",
+      "licence": "CC BY-SA 4.0, via Wikimedia Commons (resized)",
+      "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Ayrton_Senna_during_the_race_in_Spa-Francorchamps_on_25_August_1991.jpg"
+    },
+    "cockpit": {
+      "src": "assets/photos/cockpit.jpg",
+      "alt": "Ayrton Senna — European Grand Prix, Brands Hatch, 1985",
+      "caption": "European Grand Prix, Brands Hatch, 1985",
+      "credit": "Jerry Lewis-Evans",
+      "licence": "CC BY-SA 2.0, via Wikimedia Commons (resized)",
+      "licenceUrl": "https://creativecommons.org/licenses/by-sa/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:1985_European_GP_Senna.jpg"
+    },
+    "podium": {
+      "src": "assets/photos/podium.jpg",
+      "alt": "Ayrton Senna — Belgian Grand Prix podium, Spa, 1989",
+      "caption": "Belgian Grand Prix podium, Spa, 1989",
+      "credit": "madagascarica from Verneuil Grand, France",
+      "licence": "CC BY 2.0, via Wikimedia Commons (resized)",
+      "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Ayrton_Senna_1989_Belgian_GP_podium.jpg"
+    },
+    "takeover-2": {
+      "src": "assets/photos/takeover-2.jpg",
+      "alt": "Ayrton Senna — United States Grand Prix, Phoenix, 1991",
+      "caption": "United States Grand Prix, Phoenix, 1991",
+      "credit": "Stuart Seeger from College Station, Texas, USA",
+      "licence": "CC BY 2.0, via Wikimedia Commons (resized)",
+      "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+      "source": "https://commons.wikimedia.org/wiki/File:Ayrton_Senna_1991_USA_3.jpg"
+    }
+  }
+}
