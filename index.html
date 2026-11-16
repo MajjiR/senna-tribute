@@ -1,0 +1,566 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Ayrton Senna 1960–1994 — an unofficial fan tribute</title>
+  <meta name="description" content="An unofficial fan tribute to Ayrton Senna: three World Championships, 41 Grand Prix wins, 65 pole positions and a legacy that outlasted the racing.">
+  <meta name="theme-color" content="#07110D">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <script>
+    // Flag reduced motion before first paint so CSS can lay the page out without pins.
+    (function () {
+      var d = document.documentElement;
+      d.classList.add('js');
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || /[?&]rm=1/.test(location.search)) d.classList.add('rm');
+    })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/lap-drive.css">
+  <link rel="stylesheet" href="css/story.css">
+  <script type="importmap">
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+  </script>
+</head>
+<body>
+
+<!-- SVG filter used for the velocity-driven "liquid" wobble on image panels -->
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <filter id="liquid" x="-10%" y="-10%" width="120%" height="120%" color-interpolation-filters="sRGB">
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.02" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="0" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ───────── Loader ───────── -->
+<div class="loader" id="loader" role="status" aria-live="polite" aria-label="Loading">
+  <div class="loader__cols" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+  <div class="loader__body">
+    <div class="loader__lights" aria-hidden="true">
+      <span><b></b><b></b></span><span><b></b><b></b></span><span><b></b><b></b></span><span><b></b><b></b></span><span><b></b><b></b></span>
+    </div>
+    <div class="loader__row">
+      <span class="mono">Formation lap</span>
+      <span class="loader__count"><span id="loader-count">000</span></span>
+      <span class="mono">São Paulo · 1960</span>
+    </div>
+  </div>
+</div>
+
+<div class="cursor" aria-hidden="true"><div class="cursor__ring"><span class="cursor__label"></span></div><div class="cursor__dot"></div></div>
+
+<!-- ───────── Nav ───────── -->
+<header class="nav" id="nav">
+  <a class="nav__mark" href="#top" data-cursor="Top" aria-label="Back to top">
+    <span class="nav__bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span>Ayrton<br><b>Senna</b></span>
+  </a>
+  <nav class="nav__links" aria-label="Sections">
+    <a href="#career">Career</a>
+    <a href="#titles">Titles</a>
+    <a href="#monaco">Monaco</a>
+    <a href="#races">Races</a>
+    <a href="#story">Story</a>
+    <a href="#legacy">Legacy</a>
+  </nav>
+  <div class="nav__right">
+    <span class="nav__tag mono">Unofficial fan tribute</span>
+    <button class="nav__menu" id="menu-btn" aria-expanded="false" aria-controls="menu" data-magnetic><span>Menu</span></button>
+  </div>
+  <div class="nav__progress" aria-hidden="true"><i id="nav-progress"></i></div>
+</header>
+
+<div class="menu" id="menu" hidden>
+  <nav aria-label="Menu">
+    <a href="#top"><span class="mono">00</span>Start</a>
+    <a href="#career"><span class="mono">01</span>Career</a>
+    <a href="#titles"><span class="mono">02</span>Titles</a>
+    <a href="#monaco"><span class="mono">03</span>Monaco</a>
+    <a href="#races"><span class="mono">04</span>Races</a>
+    <a href="#story"><span class="mono">05</span>Story</a>
+    <a href="#legacy"><span class="mono">06</span>Legacy</a>
+  </nav>
+</div>
+
+<main id="main">
+
+  <!-- ───────── Hero: long pinned 3D sequence ───────── -->
+  <section class="hero pin" id="top" aria-label="Ayrton Senna">
+    <div class="pin__inner hero__inner">
+      <canvas class="hero__canvas" id="hero-canvas" aria-hidden="true"></canvas>
+      <canvas class="hero__helmet" id="helmet-canvas" aria-hidden="true"></canvas>
+      <div class="hero__fallback" aria-hidden="true"></div>
+
+      <h1 class="hero__title" aria-label="Ayrton Senna">
+        <span class="hero__word hero__word--a" data-split="chars" aria-hidden="true">Ayrton</span>
+        <span class="hero__word hero__word--b" data-split="chars" aria-hidden="true">Senna</span>
+      </h1>
+
+      <div class="hero__meta">
+        <p class="mono hero__meta-l">21·03·1960 — 01·05·1994<br>São Paulo, Brasil</p>
+        <p class="hero__lede">Three world titles. Sixty-five poles. <em>A way of driving nobody had seen before.</em></p>
+        <p class="mono hero__meta-r"><span class="hero__rev">Hold to rev ·</span> Scroll<span class="hero__scroll" aria-hidden="true"></span></p>
+      </div>
+
+      <div class="hero__beats">
+        <article class="beat beat--1">
+          <span class="mono">01 — Profile</span>
+          <h2>Ten seasons.<br><em>161 starts.</em></h2>
+          <p>Formula 1 from 1984 to 1994, with four teams and one fixed idea: the lap could always be faster.</p>
+        </article>
+        <article class="beat beat--2">
+          <span class="mono">02 — Plan view</span>
+          <h2>One lap,<br><em>65 times.</em></h2>
+          <p>Sixty-five pole positions from 161 starts — a record that stood until 2006.</p>
+        </article>
+        <article class="beat beat--3">
+          <span class="mono">03 — Slipstream</span>
+          <h2><em>Tricampeão.</em></h2>
+          <p>World Champion in 1988, 1990 and 1991. In Brazil, simply Ayrton.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── Marquee ───────── -->
+  <section class="marquee" aria-hidden="true">
+    <div class="marquee__row" data-marquee="1"><div class="marquee__track">
+      <span>Tricampeão mundial</span><i>1988</i><span>World Champion</span><i>1990</i><span>Tricampeão mundial</span><i>1991</i><span>World Champion</span><i>1988</i>
+    </div></div>
+    <div class="marquee__row marquee__row--alt" data-marquee="-1"><div class="marquee__track">
+      <i>41 wins</i><span>65 poles</span><i>80 podiums</i><span>161 starts</span><i>41 wins</i><span>65 poles</span><i>80 podiums</i><span>161 starts</span>
+    </div></div>
+  </section>
+
+  <!-- ───────── Intro ───────── -->
+  <section class="intro" id="intro">
+    <div class="intro__head">
+      <span class="mono">The driver</span>
+      <span class="mono">Ayrton Senna da Silva</span>
+    </div>
+    <p class="intro__text" data-split="words" data-scrub-words>
+      Born in São Paulo on 21 March 1960, he was racing karts at thirteen. He crossed the Atlantic to win in Formula Ford, took the British Formula 3 title in 1983, and reached Formula 1 a year later. Over ten seasons he turned qualifying into an art form and made wet races his own.
+    </p>
+    <div class="intro__grid">
+      <figure class="slot slot--portrait liquid-y" data-slot="portrait" data-parallax="-8" style="--ar: 4 / 5">
+        <div class="slot__media"><img src="assets/slots/portrait.svg" alt="" loading="lazy"></div>
+        <span class="slot__tag mono">Photo slot 01 · Portrait</span>
+        <figcaption class="mono">Placeholder artwork — add a photo you hold the rights to</figcaption>
+      </figure>
+      <div class="intro__facts">
+        <dl>
+          <div class="reveal"><dt class="mono">Born</dt><dd>21 March 1960<br>São Paulo, Brazil</dd></div>
+          <div class="reveal"><dt class="mono">Karting from</dt><dd>1973</dd></div>
+          <div class="reveal"><dt class="mono">British F3 Champion</dt><dd>1983</dd></div>
+          <div class="reveal"><dt class="mono">Formula 1</dt><dd>1984 — 1994</dd></div>
+          <div class="reveal"><dt class="mono">Teams</dt><dd>Toleman · Lotus<br>McLaren · Williams</dd></div>
+        </dl>
+      </div>
+      <figure class="slot slot--karting liquid-y" data-slot="karting" data-parallax="10" style="--ar: 4 / 3">
+        <div class="slot__media"><img src="assets/slots/karting.svg" alt="" loading="lazy"></div>
+        <span class="slot__tag mono">Photo slot 02 · Beginnings</span>
+        <figcaption class="mono">Placeholder artwork — add a photo you hold the rights to</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ───────── Photo takeover 1 ───────── -->
+  <section class="takeover pin" aria-label="Photograph">
+    <div class="pin__inner takeover__inner">
+      <figure class="slot takeover__slot" data-slot="takeover-1" style="--ar: 16 / 9">
+        <div class="slot__media"><img src="assets/slots/rain.svg" alt="" loading="lazy"></div>
+        <span class="slot__tag mono">Photo slot 07 · Full screen</span>
+      </figure>
+      <div class="takeover__text">
+        <span class="mono">Wet weather</span>
+        <p class="display">Where others<br>lifted, <em>he went.</em></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── Stats ───────── -->
+  <section class="stats" id="stats">
+    <canvas class="stats__canvas" data-shader="speed" aria-hidden="true"></canvas>
+    <div class="stats__head">
+      <span class="mono">The numbers</span>
+      <h2 class="display" data-split="chars" data-rise>By the<br>record book</h2>
+    </div>
+    <ul class="stats__grid">
+      <li class="stat stat--xl">
+        <button class="stat__btn" type="button" aria-expanded="false" data-cursor="Moment">
+          <span class="stat__n" data-count="41">41</span><span class="stat__l">Grand Prix wins</span><span class="stat__more mono" aria-hidden="true">The moment +</span>
+        </button>
+        <div class="stat__moment"><span class="mono">First · Estoril · 21 April 1985</span><p>The first came in torrential rain in Portugal, more than a minute clear of second place. <em>The last: Adelaide, 1993.</em></p></div>
+      </li>
+      <li class="stat stat--xl">
+        <button class="stat__btn" type="button" aria-expanded="false" data-cursor="Moment">
+          <span class="stat__n" data-count="65">65</span><span class="stat__l">Pole positions</span><span class="stat__more mono" aria-hidden="true">The moment +</span>
+        </button>
+        <div class="stat__moment"><span class="mono">Monaco · Qualifying · 1988</span><p>Pole by 1.427 seconds — over his own team-mate, in the same car. <em>The 65th and last: Imola, 1994.</em></p></div>
+      </li>
+      <li class="stat">
+        <button class="stat__btn" type="button" aria-expanded="false" data-cursor="Moment">
+          <span class="stat__n" data-count="3">3</span><span class="stat__l">World Championships</span><span class="stat__more mono" aria-hidden="true">+</span>
+        </button>
+        <div class="stat__moment"><span class="mono">Suzuka · 1988 · 1990 · 1991</span><p>All three were settled at the same Japanese circuit.</p></div>
+      </li>
+      <li class="stat">
+        <button class="stat__btn" type="button" aria-expanded="false" data-cursor="Moment">
+          <span class="stat__n" data-count="80">80</span><span class="stat__l">Podiums</span><span class="stat__more mono" aria-hidden="true">+</span>
+        </button>
+        <div class="stat__moment"><span class="mono">First · Monaco · 1984</span><p>Second place in a Toleman, in the rain, in his rookie year.</p></div>
+      </li>
+      <li class="stat">
+        <button class="stat__btn" type="button" aria-expanded="false" data-cursor="Moment">
+          <span class="stat__n" data-count="161">161</span><span class="stat__l">Race starts</span><span class="stat__more mono" aria-hidden="true">+</span>
+        </button>
+        <div class="stat__moment"><span class="mono">Brazil 1984 → Imola 1994</span><p>The first at his home Grand Prix with Toleman; the last on 1 May 1994.</p></div>
+      </li>
+      <li class="stat">
+        <button class="stat__btn" type="button" aria-expanded="false" data-cursor="Moment">
+          <span class="stat__n" data-count="19">19</span><span class="stat__l">Fastest laps</span><span class="stat__more mono" aria-hidden="true">+</span>
+        </button>
+        <div class="stat__moment"><span class="mono">Your turn</span><p>Hold to drive a lap of five of his greatest races. <a href="#races" class="stat__link">Take the wheel ↓</a></p></div>
+      </li>
+      <li class="stat">
+        <button class="stat__btn" type="button" aria-expanded="false" data-cursor="Moment">
+          <span class="stat__n" data-count="6">6</span><span class="stat__l">Monaco wins</span><span class="stat__more mono" aria-hidden="true">+</span>
+        </button>
+        <div class="stat__moment"><span class="mono">1987 · 1989 – 1993</span><p>One win with Lotus, then five in a row. Still the record.</p></div>
+      </li>
+    </ul>
+    <p class="stats__note mono">Hover or tap a number for the moment behind it</p>
+  </section>
+
+  <!-- ───────── Career: horizontal pinned track ───────── -->
+  <section class="career pin" id="career" aria-label="Career by team">
+    <div class="pin__inner career__inner">
+      <div class="career__hud mono" aria-hidden="true">
+        <span>Career</span>
+        <span class="career__year" id="career-year">1984</span>
+        <span class="career__bar"><i id="career-bar"></i></span>
+        <span>1994</span>
+      </div>
+      <div class="career__track" id="career-track">
+
+        <article class="panel panel--title">
+          <span class="mono">01 — The career</span>
+          <h2 class="display">Ten<br>seasons</h2>
+          <div class="panel__car" role="img" aria-label="Stylised open-wheel racing car silhouette"></div>
+          <p class="panel__hint mono"><span>Keep scrolling</span><i aria-hidden="true">→</i></p>
+        </article>
+
+        <article class="panel" data-year="1984" style="--bg:#1c2533;--acc:#f3efe4">
+          <span class="panel__num" aria-hidden="true">84</span>
+          <header>
+            <span class="mono">1984 · Rookie season</span>
+            <h3 class="display">Toleman</h3>
+            <p class="panel__livery mono"><span class="sw"><i style="background:#f3efe4"></i></span>Car colours · white</p>
+          </header>
+          <p>A small team and a first season that announced him. Three podiums in a car that had no business near the front — Monaco, Brands Hatch and Estoril — and ninth in the championship.</p>
+          <ul class="panel__facts mono">
+            <li><b>3</b> podiums</li><li><b>13</b> points</li><li><b>P9</b> in the standings</li>
+          </ul>
+          <figure class="slot slot--side" data-slot="rain" style="--ar: 4 / 5">
+            <div class="slot__media"><img src="assets/slots/rain.svg" alt="" loading="lazy"></div>
+            <span class="slot__tag mono">Photo slot 03 · Wet race</span>
+            <figcaption class="mono">Placeholder artwork</figcaption>
+          </figure>
+        </article>
+
+        <article class="panel" data-year="1985" style="--bg:#0b0b0a;--acc:#c9a24a">
+          <span class="panel__num" aria-hidden="true">85</span>
+          <header>
+            <span class="mono">1985 — 1987 · Three seasons</span>
+            <h3 class="display">Lotus</h3>
+            <p class="panel__livery mono"><span class="sw"><i style="background:#0b0b0a"></i><i style="background:#c9a24a"></i></span>Car colours · black &amp; gold 1985–86</p>
+            <p class="panel__livery mono"><span class="sw"><i style="background:#ffd400"></i></span>Car colours · yellow 1987</p>
+          </header>
+          <p>The first pole and the first win came on the same weekend, in the rain at Estoril in April 1985. Sixteen poles in three years made him the benchmark over a single lap.</p>
+          <ul class="panel__facts mono">
+            <li><b>6</b> wins</li><li><b>16</b> poles</li><li><b>P4 · P4 · P3</b></li>
+          </ul>
+          <figure class="slot slot--side" data-slot="cockpit" style="--ar: 10 / 7">
+            <div class="slot__media"><img src="assets/slots/cockpit.svg" alt="" loading="lazy"></div>
+            <span class="slot__tag mono">Photo slot 04 · Focus</span>
+            <figcaption class="mono">Placeholder artwork</figcaption>
+          </figure>
+        </article>
+
+        <article class="panel panel--wide" data-year="1988" style="--bg:#4a0c12;--acc:#ffffff">
+          <span class="panel__num" aria-hidden="true">88</span>
+          <header>
+            <span class="mono">1988 — 1993 · Six seasons</span>
+            <h3 class="display">McLaren</h3>
+            <p class="panel__livery mono"><span class="sw"><i style="background:#c8102e"></i><i style="background:#ffffff"></i></span>Car colours · red &amp; white</p>
+          </header>
+          <p>The defining years. Thirty-five of his forty-one victories, forty-six poles and all three World Championships — much of it fought against Alain Prost, first as team-mates, then as rivals across the garage wall.</p>
+          <ul class="panel__facts mono">
+            <li><b>35</b> wins</li><li><b>46</b> poles</li><li><b>3</b> titles</li>
+          </ul>
+          <img class="panel__car88" src="assets/car-1988-side.svg" alt="Stylised 1988-era Formula 1 car in plain red and white" loading="lazy">
+          <figure class="slot slot--side" data-slot="podium" style="--ar: 10 / 7">
+            <div class="slot__media"><img src="assets/slots/podium.svg" alt="" loading="lazy"></div>
+            <span class="slot__tag mono">Photo slot 05 · Celebration</span>
+            <figcaption class="mono">Placeholder artwork</figcaption>
+          </figure>
+        </article>
+
+        <article class="panel" data-year="1994" style="--bg:#0a1a3f;--acc:#ffffff">
+          <span class="panel__num" aria-hidden="true">94</span>
+          <header>
+            <span class="mono">1994 · Three races</span>
+            <h3 class="display">Williams</h3>
+            <p class="panel__livery mono"><span class="sw"><i style="background:#0a1a3f"></i><i style="background:#ffffff"></i></span>Car colours · dark blue &amp; white</p>
+          </header>
+          <p>A new team and a difficult car. He started all three races of 1994 from pole position — Interlagos, Aida and Imola.</p>
+          <ul class="panel__facts mono">
+            <li><b>3</b> starts</li><li><b>3</b> poles</li>
+          </ul>
+        </article>
+
+        <article class="panel panel--chart" data-year="1994">
+          <header>
+            <span class="mono">Season by season</span>
+            <h3 class="display">Wins &amp; poles</h3>
+          </header>
+          <div class="chart" id="season-chart" role="img" aria-label="Wins and pole positions per season, 1984 to 1994"></div>
+          <p class="chart__key mono"><span class="k k--w"></span>Wins <span class="k k--p"></span>Poles <span class="k k--c"></span>Champion</p>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── Championships: stacking cards ───────── -->
+  <section class="titles" id="titles" aria-label="World Championships">
+    <div class="titles__intro">
+      <span class="mono">02 — World Champion</span>
+      <h2 class="display" data-split="chars" data-rise>Three<br>crowns</h2>
+      <img class="titles__helmet" src="assets/helmet-side.svg" alt="" data-parallax="-14" loading="lazy">
+    </div>
+
+    <article class="crown crown--88">
+      <div class="crown__inner">
+        <div class="crown__laurel" aria-hidden="true"></div>
+        <span class="crown__year" aria-hidden="true">1988</span>
+        <div class="crown__copy">
+          <span class="mono">First title · McLaren</span>
+          <h3 class="display">1988</h3>
+          <p>Eight wins and thirteen poles from sixteen races. The title was settled at Suzuka: he stalled on the grid, dropped to fourteenth, and still won.</p>
+          <ul class="mono"><li><b>8</b> wins</li><li><b>13</b> poles</li><li>Clinched at <b>Suzuka</b></li></ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="crown crown--90">
+      <div class="crown__inner">
+        <div class="crown__laurel" aria-hidden="true"></div>
+        <span class="crown__year" aria-hidden="true">1990</span>
+        <div class="crown__copy">
+          <span class="mono">Second title · McLaren</span>
+          <h3 class="display">1990</h3>
+          <p>Six wins and ten poles. It ended at Suzuka's first corner, in a collision with Prost that people still argue about today.</p>
+          <ul class="mono"><li><b>6</b> wins</li><li><b>10</b> poles</li><li>Clinched at <b>Suzuka</b></li></ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="crown crown--91">
+      <div class="crown__inner">
+        <div class="crown__laurel" aria-hidden="true"></div>
+        <span class="crown__year" aria-hidden="true">1991</span>
+        <div class="crown__copy">
+          <span class="mono">Third title · McLaren</span>
+          <h3 class="display">1991</h3>
+          <p>Four straight wins to open the season, seven in all — including, at last, his home Grand Prix. Champion for the third time, again at Suzuka.</p>
+          <ul class="mono"><li><b>7</b> wins</li><li><b>8</b> poles</li><li>Clinched at <b>Suzuka</b></li></ul>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ───────── Photo takeover 2 ───────── -->
+  <section class="takeover takeover--b pin" aria-label="Photograph">
+    <div class="pin__inner takeover__inner">
+      <figure class="slot takeover__slot" data-slot="takeover-2" style="--ar: 16 / 9">
+        <div class="slot__media"><img src="assets/slots/cockpit.svg" alt="" loading="lazy"></div>
+        <span class="slot__tag mono">Photo slot 08 · Full screen</span>
+      </figure>
+      <div class="takeover__text">
+        <span class="mono">Qualifying</span>
+        <p class="display">One lap.<br><em>Nothing held back.</em></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── Monaco feature ───────── -->
+  <section class="monaco pin" id="monaco" aria-label="Monaco">
+    <div class="pin__inner monaco__inner">
+      <canvas class="monaco__canvas" data-shader="rain" aria-hidden="true"></canvas>
+      <div class="monaco__head">
+        <span class="mono">03 — Monte Carlo</span>
+        <h2 class="display monaco__title">Monaco</h2>
+        <p class="monaco__lede">Six victories on the streets of the principality — still the record — five of them in a row.</p>
+      </div>
+      <div class="monaco__map">
+        <div class="circuit" data-circuit="monaco" data-labels></div>
+      </div>
+      <div class="monaco__side">
+        <div class="monaco__count"><span id="monaco-count">0</span><small class="mono">/ 6 wins</small></div>
+        <ol class="monaco__years mono" aria-label="Monaco wins — choose a year">
+          <li data-era="lotus"><button type="button" data-moment="First Monaco win, with Lotus — and the first Grand Prix ever won by a car with active suspension.">1987</button></li>
+          <li class="is-dnf"><button type="button" data-moment="Leading comfortably, he crashed at Portier on lap 67 of 78.">1988</button></li>
+          <li><button type="button" data-moment="Back as World Champion: pole position, and he led every lap.">1989</button></li>
+          <li><button type="button" data-moment="Pole and every lap led again. Only three cars completed the full distance.">1990</button></li>
+          <li><button type="button" data-moment="Pole, every lap led — a third straight lights-to-flag win in the principality.">1991</button></li>
+          <li><button type="button" data-moment="Nigel Mansell's faster Williams closed right up over the final laps. Senna gave him no way past.">1992</button></li>
+          <li><button type="button" data-moment="A record sixth win, after Prost and Schumacher both ran into trouble ahead of him.">1993</button></li>
+        </ol>
+        <p class="monaco__moment" id="monaco-moment" aria-live="polite"><span class="mono">Tap a year</span><span class="monaco__moment-text">Pole by 1.427s over his own team-mate in 1988 — then a crash from the lead.</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────── Iconic races ───────── -->
+  <section class="races" id="races">
+    <div class="races__head">
+      <span class="mono">04 — Five afternoons</span>
+      <h2 class="display" data-split="chars" data-rise>The races<br>people still<br>talk about</h2>
+    </div>
+
+    <article class="race" data-cursor="Lap" data-theme="light" style="--bg:#f3efe4;--fg:#07110d;--acc:#1b4fd8">
+      <div class="race__idx mono">01</div>
+      <div class="race__main">
+        <span class="mono">3 June 1984 · Toleman · Finished 2nd</span>
+        <span class="race__livery mono"><span class="sw"><i style="background:#f3efe4"></i><i style="background:#1b4fd8"></i></span>Car colours · Toleman · white</span>
+        <h3 class="display">Monaco <em>’84</em></h3>
+        <p>Thirteenth on the grid in a downpour, in his first season. He climbed to second and was catching the leader hand over fist when the race was stopped. A first podium, and notice served.</p>
+      </div>
+      <div class="race__map" data-circuit="monaco" data-wet data-kicker="3 June 1984 · Toleman" data-title="P2" data-result="Red flag" data-note="Stopped in the rain while he was closing in — a first podium."><div class="circuit" data-circuit="monaco"></div></div>
+    </article>
+
+    <article class="race" data-cursor="Lap" data-theme="dark" style="--bg:#0b0b0a;--fg:#f3efe4;--acc:#c9a24a">
+      <div class="race__idx mono">02</div>
+      <div class="race__main">
+        <span class="mono">21 April 1985 · Lotus · Won</span>
+        <span class="race__livery mono"><span class="sw"><i style="background:#0b0b0a"></i><i style="background:#c9a24a"></i></span>Car colours · Lotus · black &amp; gold</span>
+        <h3 class="display">Estoril <em>’85</em></h3>
+        <p>First pole on Saturday, first win on Sunday. In rain so heavy that others spun on the straights, he finished more than a minute clear and lapped every car but one.</p>
+      </div>
+      <div class="race__map" data-circuit="estoril" data-wet data-kicker="21 April 1985 · Lotus" data-title="Won" data-result="+1:02.978" data-note="First pole, first win, same weekend."><div class="circuit" data-circuit="estoril"></div></div>
+    </article>
+
+    <article class="race" data-cursor="Lap" data-theme="dark" style="--bg:#a50f1d;--fg:#ffffff;--acc:#ffffff">
+      <div class="race__idx mono">03</div>
+      <div class="race__main">
+        <span class="mono">30 October 1988 · McLaren · Won</span>
+        <span class="race__livery mono"><span class="sw"><i style="background:#a50f1d"></i><i style="background:#ffffff"></i></span>Car colours · McLaren · red &amp; white</span>
+        <h3 class="display">Suzuka <em>’88</em></h3>
+        <p>The engine stalled as the lights changed. The slope of the grid got him rolling; fourteenth at the first corner became first by lap twenty-eight, and with it a first World Championship.</p>
+      </div>
+      <div class="race__map" data-circuit="suzuka" data-kicker="30 October 1988 · McLaren" data-title="Won" data-result="Champion" data-note="Fourteenth at the first corner. World Champion at the flag."><div class="circuit" data-circuit="suzuka"></div></div>
+    </article>
+
+    <article class="race" data-cursor="Lap" data-theme="light" style="--bg:#f6f3ee;--fg:#07110d;--acc:#c8102e">
+      <div class="race__idx mono">04</div>
+      <div class="race__main">
+        <span class="mono">24 March 1991 · McLaren · Won</span>
+        <span class="race__livery mono"><span class="sw"><i style="background:#f6f3ee"></i><i style="background:#c8102e"></i></span>Car colours · McLaren · red &amp; white</span>
+        <h3 class="display">Interlagos <em>’91</em></h3>
+        <p>His eighth attempt at winning at home. With the gearbox failing he drove the final laps stuck in sixth gear as the rain came, held on to win, and had to be helped from the car.</p>
+      </div>
+      <div class="race__map" data-circuit="interlagos" data-wet data-kicker="24 March 1991 · McLaren" data-title="Won" data-result="Sixth gear" data-note="Eighth try. First win at home."><div class="circuit" data-circuit="interlagos"></div></div>
+    </article>
+
+    <article class="race" data-cursor="Lap" data-theme="dark" style="--bg:#a50f1d;--fg:#ffffff;--acc:#ffffff">
+      <div class="race__idx mono">05</div>
+      <div class="race__main">
+        <span class="mono">11 April 1993 · McLaren · Won</span>
+        <span class="race__livery mono"><span class="sw"><i style="background:#a50f1d"></i><i style="background:#ffffff"></i></span>Car colours · McLaren · red &amp; white</span>
+        <h3 class="display">Donington <em>’93</em></h3>
+        <p>Fourth on the grid, fifth into the first corner, first by the end of the opening lap. On a day of changing weather he won the European Grand Prix by well over a minute.</p>
+      </div>
+      <div class="race__map" data-circuit="donington" data-wet data-kicker="11 April 1993 · McLaren" data-title="Won" data-result="+1:23.199" data-note="Fifth to first on the opening lap. Everyone but Hill lapped."><div class="circuit" data-circuit="donington"></div></div>
+    </article>
+  </section>
+
+  <!-- ───────── The story (built by js/story.js) ───────── -->
+  <section class="story" id="story" aria-label="The story"></section>
+
+  <!-- ───────── Legacy ───────── -->
+  <section class="legacy" id="legacy">
+    <canvas class="legacy__canvas" data-shader="flow" aria-hidden="true"></canvas>
+    <div class="legacy__wrap">
+      <div class="legacy__head">
+        <span class="mono">05 — What remained</span>
+        <h2 class="display" data-split="chars" data-rise>Legacy</h2>
+      </div>
+      <div class="legacy__grid">
+        <div class="legacy__copy">
+          <p class="legacy__lede reveal">Months after Imola, his family founded the <em>Instituto Ayrton Senna</em> — an idea he had discussed with his sister Viviane, who has led it since 1994.</p>
+          <p class="reveal">The Institute works with public schools across Brazil on literacy, teacher training and the wider development of children and young people. Its 2023 annual report counts more than 36 million reached in 29 years.</p>
+          <a class="btn reveal" href="https://institutoayrtonsenna.org.br/en/" target="_blank" rel="noopener noreferrer" data-magnetic data-cursor="Visit">
+            <span>Instituto Ayrton Senna</span><i aria-hidden="true">↗</i>
+          </a>
+        </div>
+        <div class="legacy__num">
+          <span class="legacy__big"><span data-count="36">36</span>M+</span>
+          <span class="mono">Children and young people reached, 1994–2023<br>(Instituto Ayrton Senna annual report, 2023)</span>
+        </div>
+        <figure class="slot slot--wide liquid-y" data-slot="saopaulo" data-parallax="-6" style="--ar: 12 / 7">
+          <div class="slot__media"><img src="assets/slots/saopaulo.svg" alt="" loading="lazy"></div>
+          <span class="slot__tag mono">Photo slot 06 · Home</span>
+          <figcaption class="mono">Placeholder artwork — add a photo you hold the rights to</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ───────── Footer ───────── -->
+<footer class="footer" id="footer">
+  <div class="footer__kerb" aria-hidden="true"></div>
+  <p class="footer__big display" aria-label="Obrigado, Ayrton"><span data-split="chars" data-rise aria-hidden="true">Obrigado,</span><span data-split="chars" data-rise aria-hidden="true">Ayrton</span></p>
+  <div class="footer__grid">
+    <div>
+      <h4 class="mono">About this page</h4>
+      <p>This is an <strong>unofficial fan tribute</strong>. It is not affiliated with, endorsed by or connected to the Senna family, Senna Brands, the Instituto Ayrton Senna, Formula 1, the FIA, any racing team, or Netflix. All names belong to their respective owners.</p>
+    </div>
+    <div>
+      <h4 class="mono">Artwork &amp; photos</h4>
+      <p>All graphics here — the car form, circuit outlines and panels — are original and stylised, and the circuit maps are not to scale. Photo slots show placeholder artwork until filled.</p>
+      <ul class="footer__credits mono" id="photo-credits"><li>No photographs in use.</li></ul>
+    </div>
+    <div>
+      <h4 class="mono">Sources</h4>
+      <ul class="footer__links">
+        <li><a href="https://www.formula1.com/en/latest/article/vital-statistics-ayrton-senna-edition.3FeFGQfeljXvziRTfVuUYF" target="_blank" rel="noopener noreferrer">Formula1.com — career statistics</a></li>
+        <li><a href="https://www.formula1.com/en/latest/article/ayrton-senna-10-moments-of-brilliance-f1.5IhUxFnCQEJEXjLTqwUUg0" target="_blank" rel="noopener noreferrer">Formula1.com — race accounts</a></li>
+        <li><a href="https://institutoayrtonsenna.org.br/en/" target="_blank" rel="noopener noreferrer">Instituto Ayrton Senna — annual report 2023</a></li>
+      </ul>
+    </div>
+    <div class="footer__nav">
+      <h4 class="mono">Sections</h4>
+      <a href="#career">Career</a><a href="#titles">Titles</a><a href="#monaco">Monaco</a><a href="#races">Races</a><a href="#legacy">Legacy</a>
+    </div>
+  </div>
+  <div class="footer__base mono">
+    <span>1960 — 1994</span>
+    <a href="#top" class="footer__top" data-magnetic data-cursor="Up">Back to the start ↑</a>
+    <span>Made by a fan, for fans</span>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
