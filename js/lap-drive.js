@@ -472,11 +472,16 @@ export function createLapDrive(container, {
     updateSpray(dt, f);
     render();
     drawWet(dt, f);
+    // Let the page's sound engine follow this car (speed 0..1, throttle on/off).
+    window.dispatchEvent(new CustomEvent('senna:lap', { detail: { circuitId, speed: Math.min(1, f), throttle: !!(throttle && !finished) } }));
     if (active && (throttle || v > 0.5 || particles.length)) {
       raf = requestAnimationFrame(tick);
     } else {
       v = v > 0.5 ? v : 0;
-      if (!v) { root.classList.remove('is-moving'); shake.style.transform = ''; }
+      if (!v) {
+        root.classList.remove('is-moving'); shake.style.transform = '';
+        window.dispatchEvent(new CustomEvent('senna:lap', { detail: { circuitId, speed: 0, throttle: false } }));
+      }
     }
   }
   function kick() {
