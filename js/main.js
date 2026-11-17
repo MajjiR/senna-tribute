@@ -286,9 +286,11 @@ async function setupSound() {
     if (onNow) engineEl.textContent = AUDIO.engineLabel;
     btn.setAttribute('aria-pressed', String(onNow));
     btn.setAttribute('aria-label', onNow ? 'Turn sound off' : 'Turn sound on');
-    $('.nav__sound-label', btn).textContent = onNow ? 'Sound on' : 'Sound';
+    $('.nav__sound-label', btn).textContent = onNow ? 'Sound on' : 'Sound off';
   };
   btn.addEventListener('click', async () => { const onNow = await AUDIO.toggle(); paint(onNow); store(onNow); });
+  // A gentle nudge a few seconds in, so first-time visitors notice the sound option.
+  setTimeout(() => { if (!AUDIO.enabled) $('#soundbar').classList.add('is-nudge'); }, 4500);
   // If the visitor had sound on last time, resume on their first interaction (browsers require a gesture).
   let wanted = false;
   try { wanted = localStorage.getItem('senna-sound') === '1'; } catch (e) { /* ignore */ }

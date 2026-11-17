@@ -640,3 +640,31 @@ html:not(.js) .loader { display: none; }
 .yt__close { color: var(--yellow); font: inherit; letter-spacing: inherit; text-transform: inherit; }
 
 .footer__sub { margin-top: 18px; }
+
+/* Floating sound control: always visible, independent of the hiding nav */
+.soundbar { position: fixed; right: var(--pad); bottom: clamp(16px, 3vh, 28px); z-index: 85; display: flex; align-items: center; gap: 10px; pointer-events: none; }
+.soundbar > * { pointer-events: auto; }
+.soundbar__btn { display: inline-flex; align-items: center; gap: 10px; padding: 11px 16px; border-radius: 99px; background: rgba(7, 17, 13, 0.82); color: var(--cream); border: 1px solid rgba(255, 223, 0, 0.6); font-family: var(--f-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35); cursor: pointer; transition: background 0.3s, color 0.3s, border-color 0.3s; }
+.soundbar__btn:hover { border-color: var(--yellow); }
+.soundbar__btn[aria-pressed="true"] { background: var(--yellow); color: var(--ink); border-color: var(--yellow); }
+.soundbar__btn .eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+.soundbar__btn .eq i { width: 2px; height: 3px; background: currentColor; }
+.soundbar__btn[aria-pressed="true"] .eq i { animation: eq 0.9s ease-in-out infinite; }
+.soundbar__btn[aria-pressed="true"] .eq i:nth-child(2) { animation-delay: -0.3s; }
+.soundbar__btn[aria-pressed="true"] .eq i:nth-child(3) { animation-delay: -0.6s; }
+.soundbar__btn[aria-pressed="true"] .eq i:nth-child(4) { animation-delay: -0.15s; }
+.soundbar__engine { padding: 8px 12px; border-radius: 99px; background: rgba(7, 17, 13, 0.82); color: var(--cream); border: 1px solid var(--line); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); white-space: nowrap; }
+.soundbar__engine::before { content: "Engine · "; opacity: 0.6; }
+.soundbar.is-nudge .soundbar__btn { animation: nudgeSound 1.6s var(--ease) 3; }
+@keyframes nudgeSound { 0%, 100% { transform: none; box-shadow: 0 8px 30px rgba(0,0,0,0.35); } 50% { transform: translateY(-3px); box-shadow: 0 0 0 6px rgba(255, 223, 0, 0.25), 0 8px 30px rgba(0,0,0,0.35); } }
+.hero__meta-r { padding-right: 170px; }
+@media (max-width: 820px) {
+  .soundbar__engine { display: none !important; }
+  .soundbar__btn { padding: 10px 13px; }
+  .hero__meta-r { padding-right: 120px; }
+}
+.rm .soundbar__btn .eq i { animation: none !important; height: 8px; }
+html.is-loading .soundbar { opacity: 0; }
+.soundbar { transition: opacity 0.6s var(--ease); }
+
+@media (max-width: 820px) { .soundbar .nav__sound-label { display: inline; } }
