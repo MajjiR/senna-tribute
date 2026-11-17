@@ -280,7 +280,10 @@ async function setupSound() {
   if (AUDIO.failed) { btn.hidden = true; return; }
   if (/[?&]debug=1/.test(location.search)) window.__sennaAudio = AUDIO;
   const store = (v) => { try { localStorage.setItem('senna-sound', v ? '1' : '0'); } catch (e) { /* private mode */ } };
+  const engineEl = $('#engine-label');
   const paint = (onNow) => {
+    engineEl.hidden = !onNow;
+    if (onNow) engineEl.textContent = AUDIO.engineLabel;
     btn.setAttribute('aria-pressed', String(onNow));
     btn.setAttribute('aria-label', onNow ? 'Turn sound off' : 'Turn sound on');
     $('.nav__sound-label', btn).textContent = onNow ? 'Sound on' : 'Sound';
@@ -297,7 +300,26 @@ async function setupSound() {
     };
     addEventListener('pointerdown', resume); addEventListener('keydown', resume);
   }
+  // Engine follows the era on screen; the label updates when it changes.
+  const setEra = (y) => { AUDIO.setEra(y); if (AUDIO.enabled) engineEl.textContent = AUDIO.engineLabel; };
+  window.__sennaSetEra = setEra;
+  const RACE_YEAR = { monaco: 1984, estoril: 1985, suzuka: 1988, interlagos: 1991, donington: 1993 };
+  addEventListener('senna:lap', (e) => {
+    const { circuitId, speed } = e.detail || {};
+    if (speed > 0 && RACE_YEAR[circuitId]) setEra(RACE_YEAR[circuitId]);
+    AUDIO.setLap(speed);
+  });
   if (!window.ScrollTrigger || RM) return;
+  const era = (sel, year) => $$(sel).forEach((el) => ScrollTrigger.create({
+    trigger: el, start: 'top 55%', end: 'bottom 45%', onToggle: (s) => s.isActive && setEra(year),
+  }));
+  era('.hero, .marquee, .intro, .takeover, .stats', 1988);
+  era('.machine', 1988);
+  era('.crown--88', 1988); era('.crown--90', 1990); era('.crown--91', 1991);
+  era('.monaco', 1990);
+  $$('.race__map[data-circuit]').forEach((m) => RACE_YEAR[m.dataset.circuit] && ScrollTrigger.create({
+    trigger: m.closest('.race'), start: 'top 55%', end: 'bottom 45%', onToggle: (s) => s.isActive && setEra(RACE_YEAR[m.dataset.circuit]),
+  }));
   // Mood follows the page: wet sections bring rain, the story calms down, the Imola freeze goes silent.
   const zone = (sel, mood) => $$(sel).forEach((el) => ScrollTrigger.create({
     trigger: el, start: 'top 55%', end: 'bottom 45%',
@@ -313,6 +335,40 @@ async function setupSound() {
     onUpdate: (s) => AUDIO.setMood(s.progress > 0.9 ? 'silence' : 'calm'),
     onLeave: () => AUDIO.setMood('calm'), onLeaveBack: () => AUDIO.setMood('drive'),
   });
+}
+
+/* Official YouTube moments — loads YouTube only after a click (privacy-enhanced youtube-nocookie player) */
+function setupVideos(lenis) {
+  const modal = $('#yt');
+  if (!modal) return;
+  const slot = $('.yt__slot', modal), credit = $('.yt__credit', modal);
+  let lastFocus = null, wasOn = false;
+  const close = () => {
+    if (modal.hidden) return;
+    slot.replaceChildren();
+    modal.hidden = true;
+    if (lenis) lenis.start();
+    if (wasOn && AUDIO) AUDIO.enable();
+    if (lastFocus) lastFocus.focus();
+  };
+  $$('[data-yt]').forEach((btn) => btn.addEventListener('click', () => {
+    lastFocus = btn;
+    wasOn = !!(AUDIO && AUDIO.enabled);
+    if (wasOn) AUDIO.disable(); // let the video's own sound play alone
+    const f = document.createElement('iframe');
+    f.src = `https://www.youtube-nocookie.com/embed/${encodeURIComponent(btn.dataset.yt)}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+    f.title = `${btn.closest('.race').querySelector('h3').textContent.trim()} — official video`;
+    f.allow = 'autoplay; encrypted-media; picture-in-picture; fullscreen';
+    f.referrerPolicy = 'strict-origin-when-cross-origin';
+    f.allowFullscreen = true;
+    slot.replaceChildren(f);
+    credit.textContent = `Video: ${btn.dataset.ytChannel} on YouTube. Rights belong to their owners.`;
+    modal.hidden = false;
+    if (lenis) lenis.stop();
+    $('.yt__close', modal).focus();
+  }));
+  modal.addEventListener('click', (e) => { if (e.target.closest('[data-yt-close]')) close(); });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
 }
 
 /* ───────── Boot ───────── */
@@ -333,6 +389,7 @@ async function bootStatic() {
   buildCircuits(circuitMod);
   setupMoments();
   setupSound();
+  setupVideos(null);
   setupVideo(false);
   setupMachine(false);
   setupLaps(lapMod, true);
@@ -407,6 +464,7 @@ async function bootAnimated() {
 
   setupMoments();
   setupSound();
+  setupVideos(lenis);
   setupVideo(true);
   setupMachine(true);
   const laps = setupLaps(lapMod, false);
@@ -561,6 +619,7 @@ function setupScroll({ lenis, scene, helmet, shaders, laps = [], depthsP }) {
             const inner = pin.querySelector('.career__inner');
             inner.style.setProperty('--era-bg', cur ? cur.style.getPropertyValue('--bg') : '#0b1f4b');
             inner.style.setProperty('--era-acc', cur ? cur.style.getPropertyValue('--acc') : '#ffdf00');
+            if (window.__sennaSetEra) window.__sennaSetEra(cur ? cur.dataset.year : 1984);
           }
         },
       },

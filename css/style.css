@@ -614,3 +614,29 @@ html:not(.js) .loader { display: none; }
 @keyframes eq { 0%, 100% { height: 3px; } 50% { height: 12px; } }
 .rm .nav__sound .eq i { animation: none !important; height: 8px; }
 @media (max-width: 820px) { .nav__sound-label { display: none; } .nav__sound { padding: 9px 11px; } }
+
+.nav__engine { opacity: 0.75; white-space: nowrap; }
+.nav__engine::before { content: "Engine · "; opacity: 0.6; }
+@media (max-width: 1100px) { .nav__engine { display: none; } }
+
+/* Official YouTube moments: click-to-load, privacy-enhanced player */
+.race__main { grid-column: 2; }
+.race__watch { grid-column: 2; justify-self: start; display: inline-grid; grid-template-columns: auto auto; grid-template-rows: auto auto; column-gap: 14px; align-items: center; text-align: left; padding: 12px 20px 12px 12px; border-radius: 99px; border: 1px solid currentColor; font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: inherit; cursor: pointer; transition: background 0.3s, color 0.3s; margin-top: -10px; }
+.race__watch small { grid-column: 2; opacity: 0.6; font-size: 9px; letter-spacing: 0.06em; }
+.race__watch-icon { grid-row: span 2; width: 38px; height: 38px; border-radius: 50%; background: var(--acc, var(--yellow)); position: relative; }
+.race[data-theme="light"] .race__watch-icon { background: var(--ink); }
+.race__watch-icon::after { content: ""; position: absolute; left: 15px; top: 12px; border-left: 11px solid var(--bg, var(--ink)); border-top: 7px solid transparent; border-bottom: 7px solid transparent; }
+.race[data-theme="light"] .race__watch-icon::after { border-left-color: var(--cream); }
+.race__watch--link .race__watch-icon::after { left: 13px; top: 13px; border: 0; width: 12px; height: 12px; border-top: 2px solid var(--cream); border-right: 2px solid var(--cream); transform: rotate(0deg); }
+.race__watch:hover { background: var(--fg, var(--ink)); color: var(--bg, var(--cream)); }
+@media (max-width: 820px) { .race__main, .race__watch { grid-column: 1; } .race__watch { margin-top: 0; } }
+.yt { position: fixed; inset: 0; z-index: 120; display: grid; place-items: center; padding: 4vw; }
+.yt[hidden] { display: none; }
+.yt__backdrop { position: absolute; inset: 0; background: rgba(3, 6, 5, 0.88); backdrop-filter: blur(6px); }
+.yt__frame { position: relative; width: min(1200px, 100%); }
+.yt__slot { aspect-ratio: 16 / 9; background: #000; border-radius: 8px; overflow: hidden; }
+.yt__slot iframe { width: 100%; height: 100%; border: 0; display: block; }
+.yt__meta { display: flex; justify-content: space-between; gap: 16px; margin-top: 12px; color: var(--cream); }
+.yt__close { color: var(--yellow); font: inherit; letter-spacing: inherit; text-transform: inherit; }
+
+.footer__sub { margin-top: 18px; }

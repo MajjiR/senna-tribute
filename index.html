@@ -52,6 +52,13 @@
   </div>
 </div>
 
+<div class="yt" id="yt" role="dialog" aria-modal="true" aria-label="Video" hidden>
+  <div class="yt__backdrop" data-yt-close></div>
+  <div class="yt__frame"><div class="yt__slot"></div>
+    <p class="yt__meta mono"><span class="yt__credit"></span><button class="yt__close" type="button" data-yt-close>Close ✕</button></p>
+  </div>
+</div>
+
 <div class="cursor" aria-hidden="true"><div class="cursor__ring"><span class="cursor__label"></span></div><div class="cursor__dot"></div></div>
 
 <!-- ───────── Nav ───────── -->
@@ -71,6 +78,7 @@
   <div class="nav__right">
     <span class="nav__tag mono">Unofficial fan tribute</span>
     <button class="nav__sound" id="sound-btn" type="button" aria-pressed="false" aria-label="Turn sound on" data-magnetic data-cursor="Sound"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="nav__sound-label">Sound</span></button>
+    <span class="nav__engine mono" id="engine-label" hidden></span>
     <button class="nav__menu" id="menu-btn" aria-expanded="false" aria-controls="menu" data-magnetic><span>Menu</span></button>
   </div>
   <div class="nav__progress" aria-hidden="true"><i id="nav-progress"></i></div>
@@ -456,6 +464,7 @@
         <p>Thirteenth on the grid in a downpour, in his first season. He climbed to second and was catching the leader hand over fist when the race was stopped. A first podium, and notice served.</p>
       </div>
       <div class="race__map" data-circuit="monaco" data-wet data-kicker="3 June 1984 · Toleman" data-title="P2" data-result="Red flag" data-note="Stopped in the rain while he was closing in — a first podium."><div class="circuit" data-circuit="monaco"></div></div>
+      <a class="race__watch race__watch--link" href="https://www.youtube.com/@Formula1/search?query=Senna%20Monaco%201984" target="_blank" rel="noopener noreferrer" data-cursor="Open"><span class="race__watch-icon" aria-hidden="true"></span><span>Find it on F1’s channel ↗</span><small class="mono">No official upload to embed</small></a>
     </article>
 
     <article class="race" data-cursor="Lap" data-theme="dark" style="--bg:#0b0b0a;--fg:#f3efe4;--acc:#c9a24a">
@@ -467,6 +476,7 @@
         <p>First pole on Saturday, first win on Sunday. In rain so heavy that others spun on the straights, he finished more than a minute clear and lapped every car but one.</p>
       </div>
       <div class="race__map" data-circuit="estoril" data-wet data-kicker="21 April 1985 · Lotus" data-title="Won" data-result="+1:02.978" data-note="First pole, first win, same weekend."><div class="circuit" data-circuit="estoril"></div></div>
+      <button class="race__watch" type="button" data-yt="JRIOKRHhOto" data-yt-channel="FORMULA 1" data-cursor="Play"><span class="race__watch-icon" aria-hidden="true"></span><span>Watch the moment</span><small class="mono">Official video · FORMULA 1 on YouTube</small></button>
     </article>
 
     <article class="race" data-cursor="Lap" data-theme="dark" style="--bg:#a50f1d;--fg:#ffffff;--acc:#ffffff">
@@ -478,6 +488,7 @@
         <p>The engine stalled as the lights changed. The slope of the grid got him rolling; fourteenth at the first corner became first by lap twenty-eight, and with it a first World Championship.</p>
       </div>
       <div class="race__map" data-circuit="suzuka" data-kicker="30 October 1988 · McLaren" data-title="Won" data-result="Champion" data-note="Fourteenth at the first corner. World Champion at the flag."><div class="circuit" data-circuit="suzuka"></div></div>
+      <a class="race__watch race__watch--link" href="https://www.youtube.com/@Formula1/search?query=Senna%20Suzuka%201988" target="_blank" rel="noopener noreferrer" data-cursor="Open"><span class="race__watch-icon" aria-hidden="true"></span><span>Find it on F1’s channel ↗</span><small class="mono">No official upload to embed</small></a>
     </article>
 
     <article class="race" data-cursor="Lap" data-theme="light" style="--bg:#f6f3ee;--fg:#07110d;--acc:#c8102e">
@@ -489,6 +500,7 @@
         <p>His eighth attempt at winning at home. With the gearbox failing he drove the final laps stuck in sixth gear as the rain came, held on to win, and had to be helped from the car.</p>
       </div>
       <div class="race__map" data-circuit="interlagos" data-wet data-kicker="24 March 1991 · McLaren" data-title="Won" data-result="Sixth gear" data-note="Eighth try. First win at home."><div class="circuit" data-circuit="interlagos"></div></div>
+      <button class="race__watch" type="button" data-yt="PnvRP_N8BNo" data-yt-channel="Senna Oficial" data-cursor="Play"><span class="race__watch-icon" aria-hidden="true"></span><span>Watch the moment</span><small class="mono">Official video · Senna Oficial on YouTube</small></button>
     </article>
 
     <article class="race" data-cursor="Lap" data-theme="dark" style="--bg:#a50f1d;--fg:#ffffff;--acc:#ffffff">
@@ -500,6 +512,7 @@
         <p>Fourth on the grid, fifth into the first corner, first by the end of the opening lap. On a day of changing weather he won the European Grand Prix by well over a minute.</p>
       </div>
       <div class="race__map" data-circuit="donington" data-wet data-kicker="11 April 1993 · McLaren" data-title="Won" data-result="+1:23.199" data-note="Fifth to first on the opening lap. Everyone but Hill lapped."><div class="circuit" data-circuit="donington"></div></div>
+      <button class="race__watch" type="button" data-yt="pktF3wJKfxo" data-yt-channel="FORMULA 1" data-cursor="Play"><span class="race__watch-icon" aria-hidden="true"></span><span>Watch the moment</span><small class="mono">Official video · FORMULA 1 on YouTube</small></button>
     </article>
   </section>
 
@@ -567,6 +580,8 @@
       <h4 class="mono">Artwork &amp; photos</h4>
       <p>All graphics here — the car form, circuit outlines and panels — are original and stylised, and the circuit maps are not to scale. Photo slots show placeholder artwork until filled.</p>
       <ul class="footer__credits mono" id="photo-credits"><li>No photographs in use.</li></ul>
+      <h4 class="mono footer__sub">Engine sounds</h4>
+      <ul class="footer__credits mono"><li><a href="https://commons.wikimedia.org/wiki/File:McLaren-Honda_MP4_4_%281988%29_driven_by_Bruno_Senna.ogg" target="_blank" rel="noopener noreferrer">McLaren-Honda MP4/4 (1988), driven by Bruno Senna — Edvvc — CC BY-SA 3.0, via Wikimedia Commons</a></li><li><a href="https://commons.wikimedia.org/wiki/File:Toleman-Hart_TG183B_%281983%29.ogg" target="_blank" rel="noopener noreferrer">Toleman-Hart TG183B (1983) — Edvvc — CC BY-SA 3.0, via Wikimedia Commons</a></li><li><a href="https://commons.wikimedia.org/wiki/File:Williams-Renault_FW18_%281996%29.ogg" target="_blank" rel="noopener noreferrer">Williams-Renault FW18 (1996) — Edvvc — CC BY-SA 3.0, via Wikimedia Commons</a></li><li><a href="https://commons.wikimedia.org/wiki/File:Alfa_Romeo_182_%281982%29.ogg" target="_blank" rel="noopener noreferrer">Alfa Romeo 182 (1982) — Edvvc — CC BY-SA 3.0, via Wikimedia Commons</a></li><li><a href="https://commons.wikimedia.org/wiki/File:Benetton-Ford_B192_%281992%29.ogg" target="_blank" rel="noopener noreferrer">Benetton-Ford B192 (1992) — Edvvc — CC BY-SA 3.0, via Wikimedia Commons</a></li><li><a href="https://commons.wikimedia.org/wiki/File:F1-start-echoing-in-the-grounds-of-Goodwood-House.ogg" target="_blank" rel="noopener noreferrer">F1 start echoing around Goodwood House (2009) — Edvvc — CC BY-SA 3.0, via Wikimedia Commons</a></li><li>Music is original and generated live in the browser.</li></ul>
     </div>
     <div>
       <h4 class="mono">Sources</h4>
