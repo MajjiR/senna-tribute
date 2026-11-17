@@ -21,6 +21,7 @@ const MOD_NAMES = ['hero-scene', 'shaders', 'circuits', 'lap-drive', 'depth-phot
 const modules = Promise.all(MOD_NAMES.map((n) => safeImport(`./${n}.js`)));
 const NO_MODS = MOD_NAMES.map(() => null);
 let VEL = 0; // smoothed scroll velocity, shared with modules
+let REV = 0; // hero 'hold to rev' amount
 
 /* ───────── Static content builders (run with or without animation) ───────── */
 function buildChart() {
@@ -268,6 +269,52 @@ async function setupMachine(animated) {
   });
 }
 
+/* ───────── Sound: original generative score, off until the visitor turns it on ───────── */
+let AUDIO = null;
+async function setupSound() {
+  const btn = $('#sound-btn');
+  if (!btn) return;
+  const mod = await safeImport('./audio.js');
+  if (!mod) { btn.hidden = true; return; }
+  AUDIO = mod.createAudio();
+  if (AUDIO.failed) { btn.hidden = true; return; }
+  if (/[?&]debug=1/.test(location.search)) window.__sennaAudio = AUDIO;
+  const store = (v) => { try { localStorage.setItem('senna-sound', v ? '1' : '0'); } catch (e) { /* private mode */ } };
+  const paint = (onNow) => {
+    btn.setAttribute('aria-pressed', String(onNow));
+    btn.setAttribute('aria-label', onNow ? 'Turn sound off' : 'Turn sound on');
+    $('.nav__sound-label', btn).textContent = onNow ? 'Sound on' : 'Sound';
+  };
+  btn.addEventListener('click', async () => { const onNow = await AUDIO.toggle(); paint(onNow); store(onNow); });
+  // If the visitor had sound on last time, resume on their first interaction (browsers require a gesture).
+  let wanted = false;
+  try { wanted = localStorage.getItem('senna-sound') === '1'; } catch (e) { /* ignore */ }
+  if (wanted) {
+    const resume = async (e) => {
+      if (e.target.closest && e.target.closest('#sound-btn')) return;
+      removeEventListener('pointerdown', resume); removeEventListener('keydown', resume);
+      await AUDIO.enable(); paint(true);
+    };
+    addEventListener('pointerdown', resume); addEventListener('keydown', resume);
+  }
+  if (!window.ScrollTrigger || RM) return;
+  // Mood follows the page: wet sections bring rain, the story calms down, the Imola freeze goes silent.
+  const zone = (sel, mood) => $$(sel).forEach((el) => ScrollTrigger.create({
+    trigger: el, start: 'top 55%', end: 'bottom 45%',
+    onToggle: (s) => AUDIO.setMood(s.isActive ? mood : 'drive'),
+  }));
+  zone('.takeover:not(.takeover--b)', 'rain');
+  zone('.monaco', 'rain');
+  zone('.race[data-theme] .race__map[data-wet]', 'rain');
+  zone('.imola, .legacy, .footer', 'calm');
+  const story = $('#story');
+  if (story) ScrollTrigger.create({
+    trigger: story, start: 'top 55%', end: 'bottom 45%',
+    onUpdate: (s) => AUDIO.setMood(s.progress > 0.9 ? 'silence' : 'calm'),
+    onLeave: () => AUDIO.setMood('calm'), onLeaveBack: () => AUDIO.setMood('drive'),
+  });
+}
+
 /* ───────── Boot ───────── */
 buildChart();
 const photosReady = fillPhotoSlots();
@@ -285,6 +332,7 @@ async function bootStatic() {
   const [heroMod, shaderMod, circuitMod, lapMod, depthMod, storyMod, helmetMod] = await modules;
   buildCircuits(circuitMod);
   setupMoments();
+  setupSound();
   setupVideo(false);
   setupMachine(false);
   setupLaps(lapMod, true);
@@ -358,6 +406,7 @@ async function bootAnimated() {
   else { helmet.setIntro(0); helmet.setProgress(0); helmet.resize(); helmet.start(); hero.classList.add('has-helmet'); }
 
   setupMoments();
+  setupSound();
   setupVideo(true);
   setupMachine(true);
   const laps = setupLaps(lapMod, false);
@@ -612,6 +661,8 @@ function setupScroll({ lenis, scene, helmet, shaders, laps = [], depthsP }) {
     const a = Math.abs(vel);
     rev += (revTarget - rev) * (revTarget ? 0.06 : 0.04);
     const heroVel = clamp(vel + rev * 0.9, -1, 1);
+    REV = rev;
+    if (AUDIO && AUDIO.enabled) { AUDIO.setVelocity(vel); AUDIO.setRev(rev); }
     if (scene) scene.setVelocity(heroVel);
     if (helmet) helmet.setVelocity(heroVel);
     if (a > 0.002) for (const d of depths) d.setVelocity(vel);
